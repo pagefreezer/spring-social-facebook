@@ -325,6 +325,9 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 		if (pagedListParameters.getUntil() != null) {
 			uriBuilder = uriBuilder.queryParam("until", String.valueOf(pagedListParameters.getUntil()));
 		}
+        if (pagedListParameters.getOffset() != null) {
+            uriBuilder = uriBuilder.queryParam("offset", String.valueOf(pagedListParameters.getOffset()));
+        }
 		return uriBuilder;
 	}
 
