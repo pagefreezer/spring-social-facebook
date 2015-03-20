@@ -70,6 +70,14 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 		return graphApi.fetchImage(userId, "picture", imageType);
 	}
 
+	public String getUserProfileImageUrl(String userId) {
+		return getUserProfileImageUrl(userId, ImageType.NORMAL);
+	}
+
+	public String getUserProfileImageUrl(String userId, ImageType imageType) {
+	    return graphApi.fetchImageUrl(userId, "picture", imageType);
+	}
+
 	public List<String> getUserPermissions() {
 		requireAuthorization();
 		JsonNode responseNode = restTemplate.getForObject(GraphApi.GRAPH_API_URL + "me/permissions", JsonNode.class);

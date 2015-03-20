@@ -15,6 +15,13 @@
  */
 package org.springframework.social.facebook.api;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +37,8 @@ public class Photo extends FacebookObject {
 	private Reference album;
 	
 	private Date backdatedTime;
-	
+
+    @JsonDeserialize(using = TimeGranularityDeserializer.class)
 	private TimeGranularity backdatedTimeGranularity;
 	
 	private Date createdTime;
@@ -163,9 +171,16 @@ public class Photo extends FacebookObject {
 			return source;
 		}
 	}
-	
+
 	public static enum TimeGranularity {
-		YEAR, MONTH, DAY, HOUR, MIN, NONE
+        YEAR, MONTH, DAY, HOUR, MIN, NONE
 	}
+
+    private static class TimeGranularityDeserializer extends JsonDeserializer<TimeGranularity> {
+        @Override
+        public TimeGranularity deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+            return TimeGranularity.valueOf(jp.getText().toUpperCase());
+        }
+    }
 
 }

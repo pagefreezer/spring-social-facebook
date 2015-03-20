@@ -20,15 +20,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.social.facebook.api.Action;
-import org.springframework.social.facebook.api.MessageTag;
-import org.springframework.social.facebook.api.Page;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.social.facebook.api.*;
 import org.springframework.social.facebook.api.Post.FriendsPrivacyType;
 import org.springframework.social.facebook.api.Post.PostType;
 import org.springframework.social.facebook.api.Post.Privacy;
 import org.springframework.social.facebook.api.Post.StatusType;
-import org.springframework.social.facebook.api.PostProperty;
-import org.springframework.social.facebook.api.Reference;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -131,6 +128,7 @@ abstract class PostMixin extends FacebookObjectMixin {
 	Integer sharesCount;
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = PrivacyDeserializer.class)
 	public abstract static class PrivacyMixin {
 		
 		@JsonProperty("description")
@@ -178,4 +176,22 @@ abstract class PostMixin extends FacebookObjectMixin {
 			return map.containsKey("count") ? Integer.valueOf(String.valueOf(map.get("count"))): 0; 
 		}
 	}
+
+    private static class PrivacyDeserializer extends JsonDeserializer<Privacy> {
+        @Override
+        public Privacy deserialize(JsonParser jp, DeserializationContext context)
+                throws IOException {
+            JsonNode node = jp.getCodec().readTree(jp);
+            String description = node.get("description").asText();
+            Post.PrivacyType value = Post.PrivacyType.valueOf(node.get("value").asText().toUpperCase());
+
+            String friendsPrivacyString = node.get("friends").asText().toUpperCase();
+            FriendsPrivacyType friends = "".equals(friendsPrivacyString) ? FriendsPrivacyType.UNKNOWN
+                    : FriendsPrivacyType.valueOf(friendsPrivacyString);
+            String allow = node.get("allow").asText();
+            String deny = node.get("deny").asText();
+
+            return new Privacy(description, value, friends, allow, deny);
+        }
+    }
 }

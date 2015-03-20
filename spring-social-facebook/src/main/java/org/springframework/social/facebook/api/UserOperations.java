@@ -75,6 +75,21 @@ public interface UserOperations {
 	byte[] getUserProfileImage(String userId, ImageType imageType);
 
 	/**
+	 * Get the URL of the user's profile image.
+	 * @param userId the Facebook user ID.
+	 * @return the user's profile image URL.
+	 */
+	String getUserProfileImageUrl(String userId);
+
+	/**
+	 * Get the URL of the user's profile image.
+	 * @param userId the Facebook user ID.
+	 * @param imageType the image type (eg., small, normal, large. square)
+	 * @return the user's profile image URL.
+	 */
+	String getUserProfileImageUrl(String userId, ImageType imageType);
+
+	/**
 	 * Retrieves a list of permissions that the application has been granted for the authenticated user.
 	 * @return the permissions granted for the user.
 	 * @throws ApiException if there is an error while communicating with Facebook.

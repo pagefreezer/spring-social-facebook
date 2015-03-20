@@ -263,6 +263,10 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 		}
 		return response.getBody();
 	}
+
+	public String fetchImageUrl(String objectId, String connectionType, ImageType type) {
+	    return URIBuilder.fromUri(GRAPH_API_URL + objectId + "/" + connectionType + "?type=" + type.toString().toLowerCase()).build().toString();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public String publish(String objectId, String connectionType, MultiValueMap<String, Object> data) {

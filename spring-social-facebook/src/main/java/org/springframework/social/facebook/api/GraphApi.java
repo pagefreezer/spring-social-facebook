@@ -99,7 +99,16 @@ public interface GraphApi {
 	 * @param imageType the type of image to retrieve (eg., small, normal, large, or square)
 	 * @return an image as an array of bytes.
 	 */
-	byte[] fetchImage(String objectId, String connectionName, ImageType imageType);	
+	byte[] fetchImage(String objectId, String connectionName, ImageType imageType);
+
+	/**
+	 * Fetch the URL for an image.
+	 * @param objectId the object ID
+	 * @param connectionName the connection name
+	 * @param imageType the type of image to retrieve (eg., small, normal, large, or square)
+	 * @return an image URL.
+	*/
+	String fetchImageUrl(String objectId, String connectionName, ImageType imageType);
 
 	/**
 	 * Publishes data to an object's connection.

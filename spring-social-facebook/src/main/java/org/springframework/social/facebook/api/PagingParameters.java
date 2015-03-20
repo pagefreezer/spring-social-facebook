@@ -39,6 +39,15 @@ public class PagingParameters implements Serializable {
 
 	private final String before;
 
+    /**
+     * Constructs a PagedListParameters.
+     * @param limit The number of items to limit the list to.
+     * @param offset The offset into the full result list to start this list at.
+     */
+    public PagingParameters(Integer limit, Integer offset) {
+        this(limit, offset, null, null);
+    }
+
 	/**
 	 * Constructs a PagedListParameters.
 	 * @param limit The number of items to limit the list to.
@@ -49,8 +58,8 @@ public class PagingParameters implements Serializable {
 	public PagingParameters(Integer limit, Integer offset, Long since, Long until) {
 		this(limit, offset, since, until, null, null);
 	}
-	
-	public PagingParameters(Integer limit, Integer offset, Long since, Long until, String after, String before) {
+
+    public PagingParameters(Integer limit, Integer offset, Long since, Long until, String after, String before) {
 		this.limit = limit;
 		this.offset = offset;
 		this.since = since;

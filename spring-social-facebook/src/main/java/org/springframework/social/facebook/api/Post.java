@@ -185,12 +185,20 @@ public class Post extends FacebookObject {
 	public int getSharesCount() {
 		return sharesCount;
 	}
-	
+
 	public static class Privacy {
+
+        public Privacy(String description, PrivacyType value, FriendsPrivacyType friends, String allow, String deny) {
+            this.description = description;
+            this.value = value;
+            this.friends = friends;
+            this.allow = allow;
+            this.deny = deny;
+        }
+
+        private String description;
 		
-		private String description;
-		
-		private Privacy value;
+		private PrivacyType value;
 		
 		private FriendsPrivacyType friends;
 		
@@ -199,15 +207,15 @@ public class Post extends FacebookObject {
 		private String allow;
 		
 		private String deny;
-		
-		public String getDescription() {
+
+        public String getDescription() {
 			return description;
 		}
-		
-		public Privacy getValue() {
+
+		public PrivacyType getValue() {
 			return value;
 		}
-		
+
 		public FriendsPrivacyType getFriends() {
 			return friends;
 		}
@@ -221,10 +229,9 @@ public class Post extends FacebookObject {
 		}
 		
 		public String getDeny() {
-			return deny;
-		}
-		
-	}
+            return deny;
+        }
+    }
 	
 	public static enum PostType { LINK, STATUS, PHOTO, VIDEO, UNKNOWN }
 	
@@ -234,5 +241,4 @@ public class Post extends FacebookObject {
 	public static enum PrivacyType { EVERYONE, ALL_FRIENDS, FRIENDS_OF_FRIENDS, SELF, CUSTOM, UNKNOWN }
 
 	public static enum FriendsPrivacyType { ALL_FRIENDS, FRIENDS_OF_FRIENDS, SOME_FRIENDS, UNKNOWN }
-
 }
