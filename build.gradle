@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         maven { url 'http://repo.spring.io/plugins-release' }
+	maven { url 'http://maven.springframework.org/milestone' }
     }
     dependencies {
         classpath 'org.springframework.build.gradle:docbook-reference-plugin:0.2.8'
