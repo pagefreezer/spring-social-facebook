@@ -25,6 +25,7 @@ import org.springframework.social.facebook.api.*;
 import org.springframework.social.facebook.api.Post.FriendsPrivacyType;
 import org.springframework.social.facebook.api.Post.PostType;
 import org.springframework.social.facebook.api.Post.Privacy;
+import org.springframework.social.facebook.api.Post.PrivacyType;
 import org.springframework.social.facebook.api.Post.StatusType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -133,9 +134,9 @@ abstract class PostMixin extends FacebookObjectMixin {
 		
 		@JsonProperty("description")
 		String description;
-		
+
 		@JsonProperty("value")
-		Privacy value;
+		PrivacyType value;
 		
 		@JsonProperty("friends")
 		FriendsPrivacyType friends;
@@ -148,12 +149,11 @@ abstract class PostMixin extends FacebookObjectMixin {
 		
 		@JsonProperty("deny")
 		String deny;
-
 	}
-	
+
 	private static class PostTypeDeserializer extends JsonDeserializer<PostType> {
 		@Override
-		public PostType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+		public PostType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 			try {
 				return PostType.valueOf(jp.getText().toUpperCase());
 			} catch (IllegalArgumentException e) {
@@ -164,14 +164,14 @@ abstract class PostMixin extends FacebookObjectMixin {
 
 	private static class StatusTypeDeserializer extends JsonDeserializer<StatusType> {
 		@Override
-		public StatusType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+		public StatusType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 			return StatusType.valueOf(jp.getText().toUpperCase());
 		}
 	}
 
 	private static class CountDeserializer extends JsonDeserializer<Integer> {
 		@Override
-		public Integer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+		public Integer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 			Map map = jp.readValueAs(Map.class);
 			return map.containsKey("count") ? Integer.valueOf(String.valueOf(map.get("count"))): 0; 
 		}
@@ -183,13 +183,16 @@ abstract class PostMixin extends FacebookObjectMixin {
                 throws IOException {
             JsonNode node = jp.getCodec().readTree(jp);
             String description = node.get("description").asText();
-            Post.PrivacyType value = Post.PrivacyType.valueOf(node.get("value").asText().toUpperCase());
+            String allow = node.get("allow").asText();
+            String deny = node.get("deny").asText();
+
+            String privacyString = node.get("value").asText().toUpperCase();
+            Post.PrivacyType value = "".equals(privacyString) ? PrivacyType.UNKNOWN
+                    : Post.PrivacyType.valueOf(privacyString);
 
             String friendsPrivacyString = node.get("friends").asText().toUpperCase();
             FriendsPrivacyType friends = "".equals(friendsPrivacyString) ? FriendsPrivacyType.UNKNOWN
                     : FriendsPrivacyType.valueOf(friendsPrivacyString);
-            String allow = node.get("allow").asText();
-            String deny = node.get("deny").asText();
 
             return new Privacy(description, value, friends, allow, deny);
         }

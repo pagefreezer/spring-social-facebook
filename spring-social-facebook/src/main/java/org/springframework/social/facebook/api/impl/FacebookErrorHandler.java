@@ -171,8 +171,6 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 		ObjectMapper mapper = new ObjectMapper(new JsonFactory());
 		String json = readFully(response.getBody());
 		
-		System.out.println(json);
-		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Error from Facebook: " + json);
 		}
