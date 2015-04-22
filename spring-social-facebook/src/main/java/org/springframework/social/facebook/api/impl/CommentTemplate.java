@@ -39,7 +39,7 @@ class CommentTemplate extends AbstractFacebookOperations implements CommentOpera
 	}
 
 	public PagedList<Comment> getComments(String objectId, PagingParameters pagedListParameters) {
-		return graphApi.fetchConnections(objectId, "comments", Comment.class, getPagingParameters(pagedListParameters));
+		return graphApi.fetchConnections(objectId, "comments", Comment.class, getPagingParameters(pagedListParameters), ALL_FIELDS);
 	}
 
 	public Comment getComment(String commentId) {
