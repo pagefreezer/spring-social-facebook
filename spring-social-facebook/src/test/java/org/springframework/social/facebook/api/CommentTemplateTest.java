@@ -33,11 +33,11 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void getComments() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments?offset=0&limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments?offset=0&limit=25&fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("comments"), MediaType.APPLICATION_JSON));
-		
+
 		List<Comment> comments = facebook.commentOperations().getComments("123456");
 		assertEquals(2, comments.size());
 		Comment comment1 = comments.get(0);
@@ -52,7 +52,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getComments_withOffsetAndLimit() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments?offset=75&limit=100"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments?offset=75&limit=100&fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("comments"), MediaType.APPLICATION_JSON));
