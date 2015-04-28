@@ -17,6 +17,7 @@ package org.springframework.social.facebook.api.impl.json;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.social.facebook.api.ImageSource;
 import org.springframework.social.facebook.api.StoryAttachment.StoryAttachmentMedia;
 import org.springframework.social.facebook.api.StoryAttachment.StoryAttachmentTarget;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+
 abstract class StoryAttachmentMixin {
 
 	@JsonProperty("title")
@@ -33,7 +35,7 @@ abstract class StoryAttachmentMixin {
 	@JsonProperty("description")
 	String description;
 	
-	@JsonProperty("description_tags")
+	@JsonIgnore
 	List<String> descriptionTags;
 	
 	@JsonProperty("type")
