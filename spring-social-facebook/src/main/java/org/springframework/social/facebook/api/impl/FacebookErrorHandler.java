@@ -97,7 +97,7 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 				throw new OperationNotPermittedException(FACEBOOK, "Invalid object for this operation");
 			} else if (message.contains("Duplicate status message") ) {
 				throw new DuplicateStatusException(FACEBOOK, message);
-			} else if (message.contains("Feed action request limit reached")) {
+			} else if (message.contains("request limit reached")) {
 				throw new RateLimitExceededException(FACEBOOK);
 			} else if (message.contains("The status you are trying to publish is a duplicate of, or too similar to, one that we recently posted to Twitter")) {
 				throw new DuplicateStatusException(FACEBOOK, message);
