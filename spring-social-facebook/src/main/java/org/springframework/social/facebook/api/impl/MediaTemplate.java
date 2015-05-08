@@ -39,7 +39,7 @@ class MediaTemplate extends AbstractFacebookOperations implements MediaOperation
 	private final RestTemplate restTemplate;
 
 	public MediaTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser);
+		super(isAuthorizedForUser, restTemplate);
 		this.graphApi = graphApi;
 		this.restTemplate = restTemplate;
 	}

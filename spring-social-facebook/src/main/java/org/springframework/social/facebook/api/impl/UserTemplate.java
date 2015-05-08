@@ -38,7 +38,7 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 	private final RestTemplate restTemplate;
 
 	public UserTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser);
+		super(isAuthorizedForUser, restTemplate);
 		this.graphApi = graphApi;
 		this.restTemplate = restTemplate;
 	}

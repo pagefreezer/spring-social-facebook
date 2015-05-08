@@ -14,6 +14,10 @@
 	<logger name="org.springframework.social.facebook.web">
 		<level value="info" />
 	</logger>
+
+	<logger name="org.springframework.social.facebook.api">
+		<level value="debug" />
+	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">

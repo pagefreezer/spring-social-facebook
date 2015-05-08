@@ -15,14 +15,32 @@
  */
 package org.springframework.social.facebook.api.impl;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.*;
 import org.springframework.social.MissingAuthorizationException;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 
 class AbstractFacebookOperations {
-	
+
+	private final static Log logger = LogFactory.getLog(AbstractFacebookOperations.class);
+
 	private final boolean isAuthorized;
 
 	public AbstractFacebookOperations(boolean isAuthorized) {
 		this.isAuthorized = isAuthorized;
+	}
+
+	public AbstractFacebookOperations(boolean isAuthorized, RestTemplate restTemplate) {
+		this(isAuthorized);
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		restTemplate.getInterceptors().add(new OperationsRequestLoggingInterceptor());
 	}
 	
 	protected void requireAuthorization() {
@@ -30,5 +48,18 @@ class AbstractFacebookOperations {
 			throw new MissingAuthorizationException("facebook");
 		}
 	}
-	
+
+	private class OperationsRequestLoggingInterceptor implements ClientHttpRequestInterceptor {
+
+		@Override
+		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+			ClientHttpResponse response = execution.execute(request, body);
+
+			logger.debug("Request: " + request.getMethod().name() + " " + request.getURI().toString());
+			logger.debug("Body: " + (body.length == 0 ? "empty" : new String(body)));
+			logger.debug("Response: " + IOUtils.toString(response.getBody()));
+
+			return response;
+		}
+	}
 }

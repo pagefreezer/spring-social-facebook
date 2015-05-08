@@ -29,6 +29,7 @@ project('manual') {
               numbered: '',
               'spring-social-facebook-version' : project.version,
               'spring-social-version' : springSocialVersion,
+              'commons-io-version' : commonsIoVersion,
               'spring-version' : springVersion,
               'spring-security-version' : springSecurityCryptoVersion,
               'jacksonVersion' : jacksonVersion,
