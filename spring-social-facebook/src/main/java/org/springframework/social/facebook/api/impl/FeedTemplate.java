@@ -55,7 +55,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	private final RestTemplate restTemplate;
 
 	public FeedTemplate(GraphApi graphApi, RestTemplate restTemplate, ObjectMapper objectMapper, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser);
+		super(isAuthorizedForUser, restTemplate);
 		this.graphApi = graphApi;
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;

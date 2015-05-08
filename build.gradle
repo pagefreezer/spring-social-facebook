@@ -180,6 +180,7 @@ project('spring-social-facebook') {
         compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
         compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
         compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+        compile ("commons-io:commons-io:$commonsIoVersion")
         compile ("javax.servlet:javax.servlet-api:$servletApiVersion", provided)
         testCompile ("org.springframework:spring-test:$springVersion")
     }

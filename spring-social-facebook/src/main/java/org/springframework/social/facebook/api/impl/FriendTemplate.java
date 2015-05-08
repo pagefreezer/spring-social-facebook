@@ -39,7 +39,7 @@ class FriendTemplate extends AbstractFacebookOperations implements FriendOperati
 	private final RestTemplate restTemplate;
 
 	public FriendTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser);
+		super(isAuthorizedForUser, restTemplate);
 		this.graphApi = graphApi;
 		this.restTemplate = restTemplate;
 	}
