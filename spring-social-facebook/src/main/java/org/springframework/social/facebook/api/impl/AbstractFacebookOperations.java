@@ -56,8 +56,9 @@ class AbstractFacebookOperations {
 			ClientHttpResponse response = execution.execute(request, body);
 
 			logger.debug("Request: " + request.getMethod().name() + " " + request.getURI().toString());
-			logger.debug("Body: " + (body.length == 0 ? "empty" : new String(body)));
-			logger.debug("Response: " + IOUtils.toString(response.getBody()));
+			logger.debug("Request body: " + (body.length == 0 ? "empty" : new String(body)));
+			logger.debug("Response: " + response.getRawStatusCode() + " " + response.getStatusText());
+			logger.debug("Response body: " + IOUtils.toString(response.getBody()));
 
 			return response;
 		}
