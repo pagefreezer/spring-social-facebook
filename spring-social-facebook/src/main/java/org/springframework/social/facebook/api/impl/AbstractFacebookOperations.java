@@ -24,8 +24,6 @@ import org.springframework.social.MissingAuthorizationException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
 
 class AbstractFacebookOperations {
 
