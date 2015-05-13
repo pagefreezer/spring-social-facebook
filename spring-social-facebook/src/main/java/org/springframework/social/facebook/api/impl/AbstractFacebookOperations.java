@@ -40,7 +40,9 @@ class AbstractFacebookOperations {
 	public AbstractFacebookOperations(boolean isAuthorized, RestTemplate restTemplate) {
 		this(isAuthorized);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		restTemplate.getInterceptors().add(new OperationsRequestLoggingInterceptor());
+		if (logger.isDebugEnabled()) {
+			restTemplate.getInterceptors().add(new OperationsRequestLoggingInterceptor());
+		}
 	}
 	
 	protected void requireAuthorization() {
