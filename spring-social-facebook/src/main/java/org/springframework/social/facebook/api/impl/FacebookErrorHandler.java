@@ -118,6 +118,8 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 				throw new InsufficientPermissionException(FACEBOOK);
 			} else if (message.contains("The user hasn't authorized the application to perform this action")) {
 				throw new InsufficientPermissionException(FACEBOOK);
+			} else if (message.contains("request limit reached")) {
+				throw new RateLimitExceededException(FACEBOOK);
 			} else {
 				throw new OperationNotPermittedException(FACEBOOK, message);
 			}
