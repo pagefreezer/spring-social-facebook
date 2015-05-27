@@ -83,10 +83,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 		assertNull(feed.get(0).getApplication());
 	}
 
-	@Test(expected = NotAuthorizedException.class)
-	public void getFeed_unauthorized() {
-		unauthorizedFacebook.feedOperations().getFeed();
-	}
+//	@Test(expected = NotAuthorizedException.class)
+//	public void getFeed_unauthorized() {
+//		unauthorizedFacebook.feedOperations().getFeed();
+//	}
 
 	@Test
 	public void getFeed_forOwnerId() {
@@ -99,10 +99,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 		assertFeedEntries(feed);
 	}	
 
-	@Test(expected = NotAuthorizedException.class)
-	public void getFeed_forOwnerId_unauthorized() {
-		unauthorizedFacebook.feedOperations().getFeed("12345678");
-	}
+//	@Test(expected = NotAuthorizedException.class)
+//	public void getFeed_forOwnerId_unauthorized() {
+//		unauthorizedFacebook.feedOperations().getFeed("12345678");
+//	}
 
 	@Test
 	public void getHomeFeed() {
