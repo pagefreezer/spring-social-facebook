@@ -39,7 +39,10 @@ class AbstractFacebookOperations {
 		this(isAuthorized);
 		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 		if (logger.isDebugEnabled()) {
-			restTemplate.getInterceptors().add(new OperationsRequestLoggingInterceptor());
+			OperationsRequestLoggingInterceptor loggingInterceptor = new OperationsRequestLoggingInterceptor(restTemplate.hashCode());
+			if (!restTemplate.getInterceptors().contains(loggingInterceptor)) {
+				restTemplate.getInterceptors().add(loggingInterceptor);
+			}
 		}
 	}
 	
@@ -50,6 +53,10 @@ class AbstractFacebookOperations {
 	}
 
 	private class OperationsRequestLoggingInterceptor implements ClientHttpRequestInterceptor {
+		private final int id;
+		public OperationsRequestLoggingInterceptor(int id) {
+			this.id = id;
+		}
 
 		@Override
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
@@ -62,5 +69,20 @@ class AbstractFacebookOperations {
 
 			return response;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			OperationsRequestLoggingInterceptor that = (OperationsRequestLoggingInterceptor) o;
+			return id == that.id;
+
+		}
+
+		@Override
+		public int hashCode() {
+			return id;
+		}
 	}
+
 }
