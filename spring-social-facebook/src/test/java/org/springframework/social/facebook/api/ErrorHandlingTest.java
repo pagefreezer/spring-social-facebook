@@ -36,6 +36,13 @@ import org.springframework.social.RevokedAuthorizationException;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.test.web.client.MockRestServiceServer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+
 public class ErrorHandlingTest extends AbstractFacebookApiTest {
 
 	private static final String LOGGED_OUT_REVOKATION = "The authorization has been revoked. Reason: Error validating access token: The session is invalid because the user logged out.";
@@ -234,7 +241,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void notFound() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/nobody/feed?limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/nobody/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withStatus(HttpStatus.NOT_FOUND).body(jsonResource("error-404-unknown-alias")).contentType(MediaType.APPLICATION_JSON));

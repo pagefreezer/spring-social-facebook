@@ -55,6 +55,44 @@
             "updated_time":"2011-03-23T15:40:17+0000",
             "shares": {
             	"count": 23
+            },
+            "likes": {
+              "data": [
+                {
+                  "id": "8954295131232223229",
+                  "name": "Ari Forbeck"
+                }
+              ],
+              "paging": {
+                "cursors": {
+                  "after": "OG1NDASNTEzODQ3MjI5",
+                  "before": "OG1NAS5NTEzODQ3MjI5"
+                },
+                "next": "https://graph.facebook.com/6682318231_10111123380132/likes?limit=1&after=ODk1NDA5NTEzODQ3MjI5"
+              }
+            },
+            "comments": {
+              "data": [
+                {
+                  "id": "1015341233613232_10153412333323318232",
+                  "from": {
+                    "name": "Leandro Corbelo",
+                    "id": "88952312312138217"
+                  },
+                  "message": "..",
+                  "can_remove": true,
+                  "created_time": "2015-07-08T16:05:25+0000",
+                  "like_count": 0,
+                  "user_likes": false
+                }
+              ],
+              "paging": {
+                "cursors": {
+                  "after": "WTI5dGJXVnVkRjlqZFhKemIzSTZNVEF4TlRNME1EUXhPREkwTVRneU16STZNVFF6TmpNM01UVXlOUT09",
+                  "before": "WTI5dGJXVnVkRjlqZFhKemIzSTZNVEF4TlRNME1EUXhPREkwTVRneU16STZNVFF6TmpNM01UVXlOUT09"
+                },
+                "next": "https://graph.facebook.com/668918231_10153412380613232/comments?order=chronological&limit=1&after=WTI5dGJXVnVkRjlqZFhKemIzSTZNVEF4TlRNME1EUXhPREkwTVRneU16STZNVFF6TmpNM01UVXlOUT09"
+              }
             }
         },
         {

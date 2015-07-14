@@ -15,38 +15,32 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import static org.springframework.social.facebook.api.impl.PagedListUtils.*;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.social.UncategorizedApiException;
-import org.springframework.social.facebook.api.FacebookLink;
-import org.springframework.social.facebook.api.FeedOperations;
-import org.springframework.social.facebook.api.GraphApi;
-import org.springframework.social.facebook.api.PagedList;
-import org.springframework.social.facebook.api.PagingParameters;
-import org.springframework.social.facebook.api.Post;
+import org.springframework.social.facebook.api.*;
 import org.springframework.social.facebook.api.Post.PostType;
-import org.springframework.social.facebook.api.PostData;
-import org.springframework.social.facebook.api.impl.json.FacebookModule;
 import org.springframework.social.support.URIBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+
+import static org.springframework.social.facebook.api.impl.PagedListUtils.getPagedListParameters;
+import static org.springframework.social.facebook.api.impl.PagedListUtils.getPagingParameters;
 
 class FeedTemplate extends AbstractFacebookOperations implements FeedOperations {
 
 	private static final PagingParameters FIRST_PAGE = new PagingParameters(25, null, null, null);
+
+	private static final String[] ALL_FIELDS = {
+			"id", "likes.limit(1)", "comments.limit(1)", "from", "story", "story_tags", "picture", "link", "source",
+			"name", "caption", "description", "icon", "actions", "privacy", "type",
+			"status_type", "created_time", "updated_time", "is_hidden", "subscribed", "is_expired" };
 
 	private final GraphApi graphApi;
 	
@@ -75,7 +69,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 		
 	public PagedList<Post> getFeed(String ownerId, PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/feed", pagedListParameters);
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/feed", pagedListParameters, getPagingParameters(pagedListParameters), ALL_FIELDS);
 		return deserializeList(responseNode, null, Post.class);
 	}
 
@@ -85,7 +79,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	
 	public PagedList<Post> getHomeFeed(PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + "me/home", pagedListParameters);
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + "me/home", pagedListParameters, getPagingParameters(pagedListParameters));
 		return deserializeList(responseNode, null, Post.class);
 	}
 
@@ -103,7 +97,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	
 	public PagedList<Post> getStatuses(String userId, PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + userId + "/statuses", pagedListParameters);
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + userId + "/statuses", pagedListParameters, getPagingParameters(pagedListParameters));
 		return deserializeList(responseNode, "status", Post.class);
 	}
 
@@ -121,7 +115,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	
 	public PagedList<Post> getLinks(String ownerId, PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/links", pagedListParameters);
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/links", pagedListParameters, getPagingParameters(pagedListParameters));
 		return deserializeList(responseNode, "link", Post.class);
 	}
 
@@ -139,7 +133,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	
 	public PagedList<Post> getPosts(String ownerId, PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/posts", pagedListParameters);
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/posts", pagedListParameters, getPagingParameters(pagedListParameters));
 		return deserializeList(responseNode, null, Post.class);
 	}
 	
@@ -261,12 +255,30 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	
 	// private helpers
 	
-	private JsonNode fetchConnectionList(String baseUri, PagingParameters pagedListParameters) {
+	private JsonNode fetchConnectionList(String baseUri, PagingParameters pagedListParameters, MultiValueMap<String, String> queryParameters, String... fields) {
+		if(fields.length > 0 && queryParameters != null) {
+			String joinedFields = join(fields);
+			queryParameters.set("fields", joinedFields);
+		}
 		URIBuilder uriBuilder = URIBuilder.fromUri(baseUri);
 		uriBuilder = appendPagedListParameters(pagedListParameters, uriBuilder);
+		if (queryParameters != null) {
+			uriBuilder = uriBuilder.queryParams(queryParameters);
+		}
 		URI uri = uriBuilder.build();
 		JsonNode responseNode = restTemplate.getForObject(uri, JsonNode.class);
 		return responseNode;
+	}
+
+	private String join(String[] strings) {
+		StringBuilder builder = new StringBuilder();
+		if(strings.length > 0) {
+			builder.append(strings[0]);
+			for (int i = 1; i < strings.length; i++) {
+				builder.append("," + strings[i]);
+			}
+		}
+		return builder.toString();
 	}
 
 	private <T> PagedList<T> deserializeList(JsonNode jsonNode, String postType, Class<T> type) {
@@ -290,11 +302,13 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 			if (postType == null) {
 				postType = determinePostType(node);
 			}
-			
+
 			// Must have separate postType field for polymorphic deserialization. If we key off of the "type" field, then it will
 			// be null when trying to deserialize the type property.
 			node.put("postType", postType); // used for polymorphic deserialization
 			node.put("type", postType); // used to set Post's type property
+			node.put("hasLikes", containsContent("likes", node)); // used to check if contains at least 1 like
+			node.put("hasComments", containsContent("comments", node)); // used to check if contains at least 1 comm
 			return objectMapper.reader(type).readValue(node.toString()); // TODO: EXTREMELY HACKY--TEMPORARY UNTIL I FIGURE OUT HOW JACKSON 2 DOES THIS
 		} catch (IOException shouldntHappen) {
 			throw new UncategorizedApiException("facebook", "Error deserializing " + postType + " post", shouldntHappen);
@@ -312,6 +326,21 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 			}
 		}
 		return "post";
+	}
+
+	private boolean containsContent(String tag, ObjectNode node) {
+		if (!node.has(tag)) {
+			return false;
+		}
+		try {
+			JsonNode jsonTag = node.get(tag);
+			if (!jsonTag.has("data")) {
+				return false;
+			}
+			return jsonTag.elements().hasNext();
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 	
 	private URIBuilder appendPagedListParameters(PagingParameters pagedListParameters,

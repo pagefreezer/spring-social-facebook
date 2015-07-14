@@ -79,6 +79,10 @@ public class Post extends FacebookObject {
 	private List<Reference> withTags;
 		
 	private int sharesCount;
+
+	private boolean hasLikes;
+
+	private boolean hasComments;
 	
 	public String getId() {
 		return id;
@@ -184,6 +188,22 @@ public class Post extends FacebookObject {
 	
 	public int getSharesCount() {
 		return sharesCount;
+	}
+
+	public boolean hasLikes() {
+		return hasLikes;
+	}
+
+	public void setHasLikes(boolean hasLikes) {
+		this.hasLikes = hasLikes;
+	}
+
+	public boolean hasComments() {
+		return hasComments;
+	}
+
+	public void setHasComments(boolean hasComments) {
+		this.hasComments = hasComments;
 	}
 
 	public static class Privacy {

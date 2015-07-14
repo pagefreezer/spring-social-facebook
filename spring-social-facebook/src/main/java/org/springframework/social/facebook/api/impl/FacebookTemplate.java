@@ -15,18 +15,11 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import static org.springframework.social.facebook.api.impl.PagedListUtils.*;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.social.NotAuthorizedException;
@@ -57,10 +50,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.social.facebook.api.impl.PagedListUtils.getPagedListParameters;
 
 /**
  * <p>This is the central class for interacting with Facebook.</p>
@@ -243,7 +238,7 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 		return fetchPagedConnections(objectId, connectionType, type, queryParameters);
 	}
 
-	private <T> PagedList<T> pagify(Class<T> type, JsonNode jsonNode) {
+	protected <T> PagedList<T> pagify(Class<T> type, JsonNode jsonNode) {
 		List<T> data = deserializeDataList(jsonNode.get("data"), type);
 		if (jsonNode.has("paging")) {
 			JsonNode pagingNode = jsonNode.get("paging");

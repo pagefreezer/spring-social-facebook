@@ -15,18 +15,20 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.social.DuplicateStatusException;
 import org.springframework.social.NotAuthorizedException;
 import org.springframework.social.facebook.api.Post.PostType;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * @author Craig Walls
@@ -35,7 +37,7 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -46,7 +48,7 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_withPagedListParameters_since() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&since=1360384019"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&since=1360384019&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -57,7 +59,7 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_withPagedListParameters_until() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&until=1360384019"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&until=1360384019&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -68,7 +70,7 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_withUnknownType() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed-with-unknown-type"), MediaType.APPLICATION_JSON));
@@ -90,7 +92,7 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_forOwnerId() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/12345678/feed?limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/12345678/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -346,7 +348,7 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 //	@Test
 //	public void post_NewPost_withCustomPrivacy_allow() throws Exception {
 //		String requestBody = "message=Hello+Facebook+World&privacy=%7B%27value%27%3A+%27CUSTOM%27%2C%27allow%27%3A+%2712345%2C54321%27%7D";
-//		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456789/feed"))
+//		mockServer.expect(requestTo("https://graph.facebook.com/v2.2/123456789/feed"))
 //				.andExpect(method(POST))
 //				.andExpect(header("Authorization", "OAuth someAccessToken"))
 //				.andExpect(content().string(requestBody))
@@ -619,7 +621,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("https://www.facebook.com/george", feed.get(0).getProperties().get(0).getHref());
 		assertEquals("Length", feed.get(0).getProperties().get(1).getName());
 		assertEquals("1:23", feed.get(0).getProperties().get(1).getText());
+		assertTrue(feed.get(0).hasLikes());
+		assertTrue(feed.get(0).hasComments());
 		assertNull(feed.get(0).getProperties().get(1).getHref());
+
 		assertEquals(PostType.PHOTO, feed.get(1).getType());
 		assertEquals("100001387295207_160064384049804", feed.get(1).getId());
 		assertEquals("Check out my ride", feed.get(1).getMessage());
@@ -631,6 +636,9 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("https://www.facebook.com/73579/posts/160064377383138", feed.get(1).getActions().get(0).getLink());
 		assertEquals("Like", feed.get(1).getActions().get(1).getName());
 		assertEquals("https://www.facebook.com/73579/posts/160064377383138", feed.get(1).getActions().get(1).getLink());
+		assertFalse(feed.get(1).hasLikes());
+		assertFalse(feed.get(1).hasComments());
+
 		assertEquals(PostType.STATUS, feed.get(2).getType());
 		assertEquals("100001387295207_153453231377586", feed.get(2).getId());
 		assertEquals("Hello Facebook!", feed.get(2).getMessage());
@@ -643,6 +651,9 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("https://www.facebook.com/73579/posts/153453231377586", feed.get(2).getActions().get(0).getLink());
 		assertEquals("Like", feed.get(2).getActions().get(1).getName());
 		assertEquals("https://www.facebook.com/73579/posts/153453231377586", feed.get(2).getActions().get(1).getLink());
+		assertFalse(feed.get(2).hasLikes());
+		assertFalse(feed.get(2).hasComments());
+
 	}
 	
 	@SuppressWarnings("deprecation")
