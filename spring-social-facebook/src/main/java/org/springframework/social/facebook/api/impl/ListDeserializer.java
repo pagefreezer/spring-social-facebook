@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import java.util.List;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
 
 /**
  * Strategy interface for deserializing lists of data returned from Facebook as JSON.

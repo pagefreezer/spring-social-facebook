@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@ public class Location extends FacebookObject {
 	private String zip;
 
 	private String description;
+	
+	private String locatedIn;
+	
+	private String name;
+	
+	private String region;
 	
 	public Location(double latitude, double longitude) {
 		this.latitude = latitude;
@@ -83,4 +89,17 @@ public class Location extends FacebookObject {
 	public String getDescription() {
 		return description;
 	}
+	
+	public String getLocatedIn() {
+		return locatedIn;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getRegion() {
+		return region;
+	}
+	
 }

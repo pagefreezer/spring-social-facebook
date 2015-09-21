@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import static org.springframework.social.facebook.api.OpenGraphOperations.*;
-
 import org.springframework.social.facebook.api.ActionMetadata;
 import org.springframework.social.facebook.api.FitnessActions;
 import org.springframework.social.facebook.api.OpenGraphOperations;
 import org.springframework.util.MultiValueMap;
+
+import static org.springframework.social.facebook.api.OpenGraphOperations.EMPTY_ACTION_METADATA;
 
 public class FitnessActionsTemplate implements FitnessActions {
 

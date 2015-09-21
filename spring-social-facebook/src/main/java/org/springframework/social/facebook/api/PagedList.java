@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 package org.springframework.social.facebook.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class PagedList<T> extends ArrayList<T> {
+public class PagedList<T> extends CountedList<T> {
 	private static final long serialVersionUID = 1L;
 
 	private final PagingParameters previousPage;
@@ -26,7 +25,11 @@ public class PagedList<T> extends ArrayList<T> {
 	private final PagingParameters nextPage;
 
 	public PagedList(List<T> unpagedList, PagingParameters previousPage, PagingParameters nextPage) {
-		super(unpagedList);
+		this(unpagedList, previousPage, nextPage, null);
+	}
+	
+	public PagedList(List<T> unpagedList, PagingParameters previousPage, PagingParameters nextPage, Integer totalCount) {
+		super(unpagedList, totalCount);
 		this.previousPage = previousPage;
 		this.nextPage = nextPage;
 	}
@@ -38,6 +41,5 @@ public class PagedList<T> extends ArrayList<T> {
 	public PagingParameters getNextPage() {
 		return nextPage;
 	}
-
 
 }

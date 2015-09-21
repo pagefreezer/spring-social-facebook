@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,15 +63,29 @@ public class WorkEntry extends FacebookObject implements Serializable {
 	}
 	
 	public static class Project {
-		
+
+		private String id;
+
+		private String name;
+
 		private String description;
 
 		private String endDate;
 		
 		private String startDate;
-		
+
+		private Reference from;
+
 		private List<Reference> with;
-		
+
+		public String getId() {
+			return id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
 		public String getDescription() {
 			return description;
 		}
@@ -83,7 +97,11 @@ public class WorkEntry extends FacebookObject implements Serializable {
 		public String getStartDate() {
 			return startDate;
 		}
-		
+
+		public Reference getFrom() {
+			return from;
+		}
+
 		public List<Reference> getWith() {
 			return with;
 		}

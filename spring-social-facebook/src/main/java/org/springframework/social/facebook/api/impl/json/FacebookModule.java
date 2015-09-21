@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,31 +25,49 @@ import org.springframework.social.facebook.api.Comment;
 import org.springframework.social.facebook.api.CoverPhoto;
 import org.springframework.social.facebook.api.Currency;
 import org.springframework.social.facebook.api.Device;
-import org.springframework.social.facebook.api.EducationEntry;
+import org.springframework.social.facebook.api.EducationExperience;
+import org.springframework.social.facebook.api.Engagement;
 import org.springframework.social.facebook.api.Event;
 import org.springframework.social.facebook.api.EventInvitee;
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.Experience;
 import org.springframework.social.facebook.api.FamilyMember;
+import org.springframework.social.facebook.api.FriendList;
 import org.springframework.social.facebook.api.Group;
 import org.springframework.social.facebook.api.GroupMemberReference;
 import org.springframework.social.facebook.api.GroupMembership;
 import org.springframework.social.facebook.api.ImageSource;
 import org.springframework.social.facebook.api.Invitation;
 import org.springframework.social.facebook.api.Location;
+import org.springframework.social.facebook.api.MailingAddress;
 import org.springframework.social.facebook.api.MessageTag;
 import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.api.ParkingInfo;
+import org.springframework.social.facebook.api.PageParking;
+import org.springframework.social.facebook.api.PagePaymentOptions;
+import org.springframework.social.facebook.api.PageRestaurantServices;
+import org.springframework.social.facebook.api.PageRestaurantSpecialties;
+import org.springframework.social.facebook.api.PaymentPricePoint;
+import org.springframework.social.facebook.api.PaymentPricePoints;
 import org.springframework.social.facebook.api.Photo;
 import org.springframework.social.facebook.api.Photo.Image;
+import org.springframework.social.facebook.api.Place;
+import org.springframework.social.facebook.api.PlaceTag;
 import org.springframework.social.facebook.api.Post;
 import org.springframework.social.facebook.api.PostProperty;
+import org.springframework.social.facebook.api.ProfilePictureSource;
 import org.springframework.social.facebook.api.Reference;
 import org.springframework.social.facebook.api.RestaurantServices;
-import org.springframework.social.facebook.api.RestaurantSpecialties;
+import org.springframework.social.facebook.api.SecuritySettings;
 import org.springframework.social.facebook.api.StoryAttachment;
 import org.springframework.social.facebook.api.Tag;
+import org.springframework.social.facebook.api.TestUser;
+import org.springframework.social.facebook.api.User;
+import org.springframework.social.facebook.api.UserIdForApp;
+import org.springframework.social.facebook.api.UserInvitableFriend;
+import org.springframework.social.facebook.api.UserTaggableFriend;
 import org.springframework.social.facebook.api.Video;
 import org.springframework.social.facebook.api.Video.VideoFormat;
+import org.springframework.social.facebook.api.VideoUploadLimits;
+import org.springframework.social.facebook.api.VoipInfo;
 import org.springframework.social.facebook.api.WorkEntry;
 import org.springframework.social.facebook.api.WorkEntry.Project;
 import org.springframework.social.facebook.api.impl.json.PhotoMixin.ImageMixin;
@@ -81,12 +99,17 @@ public class FacebookModule extends SimpleModule {
 		context.setMixInAnnotations(Device.class, DeviceMixin.class);
 		context.setMixInAnnotations(ApplicationReference.class, ApplicationReferenceMixin.class);
 		
+		context.setMixInAnnotations(Place.class, PlaceMixin.class);
+		
 		context.setMixInAnnotations(ImageSource.class, ImageSourceMixin.class);
 		
 		context.setMixInAnnotations(Page.class, PageMixin.class);
 		context.setMixInAnnotations(RestaurantServices.class, RestaurantServicesMixin.class);
-		context.setMixInAnnotations(RestaurantSpecialties.class, RestaurantSpecialtiesMixin.class);
-		context.setMixInAnnotations(ParkingInfo.class, ParkingInfoMixin.class);
+		context.setMixInAnnotations(PageRestaurantSpecialties.class, RestaurantSpecialtiesMixin.class);
+		context.setMixInAnnotations(PageParking.class, PageParkingMixin.class);
+		context.setMixInAnnotations(PagePaymentOptions.class, PagePaymentOptionsMixin.class);
+		context.setMixInAnnotations(PageRestaurantServices.class, PageRestaurantServicesMixin.class);
+		context.setMixInAnnotations(Engagement.class, EngagementMixin.class);
 		
 		context.setMixInAnnotations(PostProperty.class, PostPropertyMixin.class);
 		
@@ -98,9 +121,10 @@ public class FacebookModule extends SimpleModule {
 		
 		context.setMixInAnnotations(Project.class, ProjectMixin.class);
 		
-		context.setMixInAnnotations(FacebookProfile.class, FacebookProfileMixin.class);
+		context.setMixInAnnotations(User.class, UserMixin.class);
 		context.setMixInAnnotations(WorkEntry.class, WorkEntryMixin.class);
-		context.setMixInAnnotations(EducationEntry.class, EducationEntryMixin.class);
+		context.setMixInAnnotations(EducationExperience.class, EducationExperienceMixin.class);
+		context.setMixInAnnotations(Experience.class, ExperienceMixin.class);
 		context.setMixInAnnotations(Reference.class, ReferenceMixin.class);
 		context.setMixInAnnotations(GroupMemberReference.class, GroupMemberReferenceMixin.class);
 		context.setMixInAnnotations(Album.class, AlbumMixin.class);
@@ -110,16 +134,42 @@ public class FacebookModule extends SimpleModule {
 		context.setMixInAnnotations(EventInvitee.class, EventInviteeMixin.class);
 		context.setMixInAnnotations(Location.class, LocationMixin.class);
 		context.setMixInAnnotations(Comment.class, CommentMixin.class);
+		context.setMixInAnnotations(PlaceTag.class, PlaceTagMixin.class);
 		context.setMixInAnnotations(Tag.class, TagMixin.class);
 		context.setMixInAnnotations(Video.class, VideoMixin.class);
 		context.setMixInAnnotations(Photo.class, PhotoMixin.class);
 		context.setMixInAnnotations(Image.class, ImageMixin.class);
 		context.setMixInAnnotations(Post.class, PostMixin.class);
-        context.setMixInAnnotations(Post.Privacy.class, PostMixin.PrivacyMixin.class);
+		context.setMixInAnnotations(Post.AdminCreator.class, PostMixin.AdminCreatorMixin.class);
+		context.setMixInAnnotations(Post.Privacy.class, PostMixin.PrivacyMixin.class);
 		context.setMixInAnnotations(Account.class, AccountMixin.class);
 		context.setMixInAnnotations(GroupMembership.class, GroupMembershipMixin.class);
 		context.setMixInAnnotations(FamilyMember.class, FamilyMemberMixin.class);
 		context.setMixInAnnotations(MessageTag.class, MessageTagMixin.class);
 		context.setMixInAnnotations(CoverPhoto.class, CoverPhotoMixin.class);
+		
+		context.setMixInAnnotations(FriendList.class, FriendListMixin.class);
+		
+		context.setMixInAnnotations(VoipInfo.class, VoipInfoMixin.class);
+		
+		context.setMixInAnnotations(MailingAddress.class, MailingAddressMixin.class);
+		
+		context.setMixInAnnotations(PaymentPricePoints.class, PaymentPricePointsMixin.class);
+		context.setMixInAnnotations(PaymentPricePoint.class, PaymentPricePointMixin.class);
+		
+		context.setMixInAnnotations(SecuritySettings.class, SecuritySettingsMixin.class);
+		context.setMixInAnnotations(SecuritySettings.SecureBrowsing.class, SecuritySettingsMixin.SecureBrowsingMixin.class);
+		
+		context.setMixInAnnotations(TestUser.class, TestUserMixin.class);
+		
+		context.setMixInAnnotations(UserIdForApp.class, UserIdForAppMixin.class);
+		
+		context.setMixInAnnotations(UserInvitableFriend.class, UserInvitableFriendMixin.class);
+		context.setMixInAnnotations(UserTaggableFriend.class, UserTaggableFriendMixin.class);
+		
+		context.setMixInAnnotations(VideoUploadLimits.class, VideoUploadLimitsMixin.class);
+		
+		context.setMixInAnnotations(ProfilePictureSource.class, ProfilePictureSourceMixin.class);
+		
 	}
 }

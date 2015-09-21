@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,12 +52,6 @@ public interface Facebook extends GraphApi, ApiBinding {
 	FeedOperations feedOperations();
 
 	/**
-	 * API for performing Facebook Query Language (FQL) queries.
-	 * @return {@link FqlOperations}
-	 */
-	FqlOperations fqlOperations();
-	
-	/**
 	 * API for performing operations with a user's set of friends.
 	 * @return {@link FriendOperations}
 	 */
@@ -92,6 +86,18 @@ public interface Facebook extends GraphApi, ApiBinding {
 	 * @return {@link PageOperations}
 	 */
 	PageOperations pageOperations();
+	
+	/**
+	 * API for working with social contexts.
+	 * @return {@link SocialContextOperations}
+	 */
+	SocialContextOperations socialContextOperations();
+	
+	/**
+	 * API for working with test users on Facebook.
+	 * @return {@link TestUserOperations}
+	 */
+	TestUserOperations testUserOperations();
 	
 	/**
 	 * API for performing operations on Facebook user profiles.

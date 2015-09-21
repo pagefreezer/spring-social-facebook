@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ public interface CommentOperations {
 	
 	/**
 	 * Posts a comment on an object on behalf of the authenticated user.
-	 * Requires "publish_stream" permission.
 	 * @param objectId the object ID
 	 * @param message the comment message
 	 * @return the new comment's ID
@@ -65,7 +64,6 @@ public interface CommentOperations {
 
 	/**
 	 * Deletes a comment.
-	 * Requires "publish_stream" permission.
 	 * @param commentId the comment ID
 	 * @throws ApiException if there is an error while communicating with Facebook.
 	 * @throws InsufficientPermissionException if the user has not granted "publish_stream" permission.

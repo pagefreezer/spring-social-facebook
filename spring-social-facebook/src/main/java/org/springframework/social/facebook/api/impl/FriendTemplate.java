@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,17 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.social.facebook.api.FacebookProfile;
-import org.springframework.social.facebook.api.FamilyMember;
-import org.springframework.social.facebook.api.FriendOperations;
-import org.springframework.social.facebook.api.GraphApi;
-import org.springframework.social.facebook.api.PagedList;
-import org.springframework.social.facebook.api.PagingParameters;
-import org.springframework.social.facebook.api.Reference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.springframework.social.facebook.api.*;
 import org.springframework.social.support.URIBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 class FriendTemplate extends AbstractFacebookOperations implements FriendOperations {
 	
@@ -38,20 +33,18 @@ class FriendTemplate extends AbstractFacebookOperations implements FriendOperati
 
 	private final RestTemplate restTemplate;
 
-	public FriendTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser, restTemplate);
+	public FriendTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorized) {
+		super(isAuthorized, restTemplate);
 		this.graphApi = graphApi;
 		this.restTemplate = restTemplate;
 	}
 	
-	public PagedList<Reference> getFriendLists() {
-		requireAuthorization();
-		return graphApi.fetchConnections("me", "friendlists", Reference.class);
+	public PagedList<FriendList> getFriendLists() {
+		return graphApi.fetchConnections("me", "friendlists", FriendList.class);
 	}
 
-	public Reference getFriendList(String friendListId) {
-		requireAuthorization();
-		return graphApi.fetchObject(friendListId, Reference.class);
+	public FriendList getFriendList(String friendListId) {
+		return graphApi.fetchObject(friendListId, FriendList.class);
 	}
 	
 	public PagedList<Reference> getFriends() {
@@ -62,63 +55,60 @@ class FriendTemplate extends AbstractFacebookOperations implements FriendOperati
 		return getFriendIds("me");
 	}
 	
-	public PagedList<FacebookProfile> getFriendProfiles() {
+	public PagedList<User> getFriendProfiles() {
 		return getFriendProfiles("me");
 	}
 
-	public PagedList<FacebookProfile> getFriendProfiles(PagingParameters pagedListParameters) {
+	public PagedList<User> getFriendProfiles(PagingParameters pagedListParameters) {
 		return getFriendProfiles("me", pagedListParameters);
 	}
 	
 	public PagedList<Reference> getFriends(String userId) {
-		requireAuthorization();
 		return graphApi.fetchConnections(userId, "friends", Reference.class);
 	}
 	
 	public PagedList<String> getFriendIds(String userId) {
-		requireAuthorization();		
 		URI uri = URIBuilder.fromUri(GraphApi.GRAPH_API_URL + userId + "/friends").queryParam("fields", "id").build();
-		@SuppressWarnings("unchecked")
-		Map<String,PagedList<Map<String, String>>> response = restTemplate.getForObject(uri, Map.class);
-		List<Map<String,String>> entryList = response.get("data");
-		List<String> idList = new ArrayList<String>(entryList.size());
-		for (Map<String, String> entry : entryList) {
-			idList.add(entry.get("id"));
-		}	
-		return new PagedList<String>(idList, null, null);
+		JsonNode responseNode = restTemplate.getForObject(uri, JsonNode.class);
+		ArrayNode dataNode = (ArrayNode) responseNode.get("data");
+		List<String> idList = new ArrayList<String>(dataNode.size());
+		for (JsonNode entryNode : dataNode) {
+			idList.add(entryNode.get("id").textValue());
+		}
+		
+		Integer totalCount = responseNode.has("summary") && responseNode.get("summary").has("total_count") ?
+				responseNode.get("summary").get("total_count").asInt() : null;
+		return new PagedList<String>(idList, null, null, totalCount);
 	}
 	
-	public PagedList<FacebookProfile> getFriendProfiles(String userId) {
-		requireAuthorization();
+	public PagedList<User> getFriendProfiles(String userId) {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
 		parameters.set("fields", FULL_PROFILE_FIELDS);
-		return graphApi.fetchConnections(userId, "friends", FacebookProfile.class, parameters);
+		return graphApi.fetchConnections(userId, "friends", User.class, parameters);
 	}
 
-	public PagedList<FacebookProfile> getFriendProfiles(String userId, PagingParameters pagedListParameters) {
-		requireAuthorization();
+	public PagedList<User> getFriendProfiles(String userId, PagingParameters pagedListParameters) {
 		MultiValueMap<String, String> parameters = PagedListUtils.getPagingParameters(pagedListParameters);
 		parameters.set("fields", FULL_PROFILE_FIELDS);
-		return graphApi.fetchConnections(userId, "friends", FacebookProfile.class, parameters);
+		return graphApi.fetchConnections(userId, "friends", User.class, parameters);
 	}
-
+	
 	public PagedList<FamilyMember> getFamily() {
-		requireAuthorization();
 		return graphApi.fetchConnections("me", "family", FamilyMember.class);
 	}
 
 	public PagedList<FamilyMember> getFamily(String userId) {
-		requireAuthorization();
 		return graphApi.fetchConnections(userId, "family", FamilyMember.class);
 	}
 
-	public PagedList<Reference> getSubscribedTo() {
-		return getSubscribedTo("me");
+	public PagedList<UserInvitableFriend> getInvitableFriends() {
+		return graphApi.fetchConnections("me", "invitable_friends", UserInvitableFriend.class, 
+				"id", "name" ,"first_name", "last_name", "middle_name");
 	}
-	
-	public PagedList<Reference> getSubscribedTo(String userId) {
-		requireAuthorization();
-		return graphApi.fetchConnections(userId, "subscribedTo", Reference.class);
+
+	public PagedList<UserTaggableFriend> getTaggableFriends() {
+		return graphApi.fetchConnections("me", "taggable_friends", UserTaggableFriend.class, 
+				"id", "name" ,"picture", "first_name", "last_name", "middle_name");  
 	}
 	
 	public PagedList<Reference> getSubscribers() {

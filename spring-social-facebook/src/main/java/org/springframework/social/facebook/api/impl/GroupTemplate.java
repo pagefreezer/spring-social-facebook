@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.GraphApi;
 import org.springframework.social.facebook.api.Group;
 import org.springframework.social.facebook.api.GroupMemberReference;
@@ -26,12 +26,11 @@ import org.springframework.social.facebook.api.PagedList;
 import org.springframework.social.facebook.api.PagingParameters;
 import org.springframework.util.MultiValueMap;
 
-class GroupTemplate extends AbstractFacebookOperations implements GroupOperations {
+class GroupTemplate implements GroupOperations {
 	
 	private final GraphApi graphApi;
 
-	public GroupTemplate(GraphApi graphApi, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser);
+	public GroupTemplate(GraphApi graphApi) {
 		this.graphApi = graphApi;
 	}
 	
@@ -48,13 +47,11 @@ class GroupTemplate extends AbstractFacebookOperations implements GroupOperation
 	}
 	
 	public PagedList<GroupMemberReference> getMembers(String groupId) {
-		requireAuthorization();
 		return graphApi.fetchConnections(groupId, "members", GroupMemberReference.class);
 	}
 
-	public PagedList<FacebookProfile> getMemberProfiles(String groupId) {
-		requireAuthorization();
-		return graphApi.fetchConnections(groupId, "members", FacebookProfile.class, FULL_PROFILE_FIELDS);
+	public PagedList<User> getMemberProfiles(String groupId) {
+		return graphApi.fetchConnections(groupId, "members", User.class, FULL_PROFILE_FIELDS);
 	}
 	
 	public PagedList<GroupMembership> getMemberships() {
@@ -62,7 +59,6 @@ class GroupTemplate extends AbstractFacebookOperations implements GroupOperation
 	}
 	
 	public PagedList<GroupMembership> getMemberships(String userId) {
-		requireAuthorization();
 		return graphApi.fetchConnections(userId, "groups", GroupMembership.class);
 	}
 

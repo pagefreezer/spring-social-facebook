@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public interface UserOperations {
 	 * @throws ApiException if there is an error while communicating with Facebook.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
-	FacebookProfile getUserProfile();
+	User getUserProfile();
 	
 	/**
 	 * Retrieves the profile for the specified user.
@@ -38,7 +38,7 @@ public interface UserOperations {
 	 * @return the user's profile information.
 	 * @throws ApiException if there is an error while communicating with Facebook.
 	 */
-	FacebookProfile getUserProfile(String userId);
+	User getUserProfile(String userId);
 
 	/**
 	 * Retrieves the user's profile image. Returns the image in Facebook's "normal" type.
@@ -95,7 +95,19 @@ public interface UserOperations {
 	 * @throws ApiException if there is an error while communicating with Facebook.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
-	List<String> getUserPermissions();
+	List<Permission> getUserPermissions();
+	
+	/**
+	 * Fetches IDs that the user has on any applications associated with the calling application via Facebook's Business Mapping API.
+	 * @return a list of ID-to-application mapping that the user has on related applications.
+	 */
+	List<UserIdForApp> getIdsForBusiness();
+	
+	/**
+	 * Fetches a list of places that the user has checked into or has been tagged at.
+	 * @return a list of place tags for the user.
+	 */
+	List<PlaceTag> getTaggedPlaces();
 	
 	/**
 	 * Searches for users.
@@ -105,4 +117,14 @@ public interface UserOperations {
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Reference> search(String query);
+	
+	static final String[] PROFILE_FIELDS = {
+		"id", "about", "age_range", "address", "bio", "birthday", "context", "cover", "currency", "devices", "education", "email", 
+		"favorite_athletes", "favorite_teams", "first_name", "gender", "hometown", "inspirational_people", "installed", "install_type",
+		"is_verified", "languages", "last_name", "link", "locale", "location", "meeting_for", "middle_name", "name", "name_format", 
+		"political", "quotes", "payment_pricepoints", "relationship_status", "religion", "security_settings", "significant_other", 
+		"sports", "test_group", "timezone", "third_party_id", "updated_time", "verified", "video_upload_limits", "viewer_can_send_gift", 
+		"website", "work"
+	};
+
 }

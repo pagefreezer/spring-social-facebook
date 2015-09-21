@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  */
 package org.springframework.social.facebook.api.impl.json;
 
-import java.util.Date;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.social.facebook.api.Comment;
 import org.springframework.social.facebook.api.MessageTag;
 import org.springframework.social.facebook.api.Reference;
 import org.springframework.social.facebook.api.StoryAttachment;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Annotated mixin to add Jackson annotations to Comment. 

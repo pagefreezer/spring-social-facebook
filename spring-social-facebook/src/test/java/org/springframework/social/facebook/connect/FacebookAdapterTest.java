@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,15 @@ package org.springframework.social.facebook.connect;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.social.connect.ConnectionValues;
 import org.springframework.social.connect.UserProfile;
 import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.GraphApi;
+import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.UserOperations;
 
 public class FacebookAdapterTest {
@@ -35,7 +38,7 @@ public class FacebookAdapterTest {
 	public void fetchProfile() {		
 		UserOperations userOperations = Mockito.mock(UserOperations.class);
 		Mockito.when(facebook.userOperations()).thenReturn(userOperations);
-		Mockito.when(userOperations.getUserProfile()).thenReturn(new FacebookProfile("12345678", "Craig Walls", "Craig", "Walls", null, null));
+		Mockito.when(userOperations.getUserProfile()).thenReturn(new User("12345678", "Craig Walls", "Craig", "Walls", null, null));
 		UserProfile profile = apiAdapter.fetchUserProfile(facebook);
 		assertEquals("Craig Walls", profile.getName());
 		assertEquals("Craig", profile.getFirstName());
@@ -45,15 +48,17 @@ public class FacebookAdapterTest {
 	}
 
 	@Test
-	public void setConnectionValues() {		
-		UserOperations userOperations = Mockito.mock(UserOperations.class);
-		Mockito.when(facebook.userOperations()).thenReturn(userOperations);
-		Mockito.when(userOperations.getUserProfile()).thenReturn(new FacebookProfile("12345678", "Craig Walls", "Craig", "Walls", null, null));
+	public void setConnectionValues() throws Exception {
+		User user = new User("12345678", "Craig Walls", "Craig", "Walls", null, null);
+		Field linkField = user.getClass().getDeclaredField("link");
+		linkField.setAccessible(true);
+		linkField.set(user, "http://www.facebook.com/975041837");
+		Mockito.when(facebook.fetchObject("me", User.class, "id", "name", "link")).thenReturn(user);
 		TestConnectionValues connectionValues = new TestConnectionValues();
 		apiAdapter.setConnectionValues(facebook, connectionValues);
 		assertEquals("Craig Walls", connectionValues.getDisplayName());
-		assertEquals("http://graph.facebook.com/v1.0/12345678/picture", connectionValues.getImageUrl());
-		assertEquals("http://facebook.com/profile.php?id=12345678", connectionValues.getProfileUrl());
+		assertEquals(GraphApi.GRAPH_API_URL + "12345678/picture", connectionValues.getImageUrl());
+		assertEquals("http://www.facebook.com/975041837", connectionValues.getProfileUrl());
 		assertEquals("12345678", connectionValues.getProviderUserId());
 	}
 

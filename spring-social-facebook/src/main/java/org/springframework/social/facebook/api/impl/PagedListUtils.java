@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.social.facebook.api.PagingParameters;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
-class PagedListUtils {
+public class PagedListUtils {
 
 	public static PagingParameters getPagedListParameters(JsonNode pagingNode, String pageKey) {
 		if (pagingNode == null || pagingNode.get(pageKey) == null) {
@@ -37,15 +36,16 @@ class PagedListUtils {
 		String offsetString = extractParameterValueFromUrl(pageNode, "offset");
 		String after = extractEncodedParameterValueFromUrl(pageNode, "after");
 		String before = extractEncodedParameterValueFromUrl(pageNode, "before");
+		String pagingToken = extractEncodedParameterValueFromUrl(pageNode, "__paging_token");
 		
 		return new PagingParameters(
 				limitString != null ? Integer.valueOf(limitString) : null, 
 				offsetString != null ? Integer.valueOf(offsetString) : null,
 				sinceString != null ? Long.valueOf(sinceString) : null, 
 				untilString != null ? Long.valueOf(untilString) : null,
-				after, before);
+				after, before, pagingToken);
 	}
-
+	
 	public static MultiValueMap<String, String> getPagingParameters(PagingParameters pagedListParameters) {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
 		if (pagedListParameters.getOffset() != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.springframework.social.config.xml.ApiHelper;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
 /**
  * Support class for JavaConfig and XML configuration support.
@@ -35,7 +34,7 @@ public class FacebookApiHelper implements ApiHelper<Facebook> {
 
 	private final UserIdSource userIdSource;
 
-	private FacebookApiHelper(UsersConnectionRepository usersConnectionRepository, UserIdSource userIdSource) {
+	public FacebookApiHelper(UsersConnectionRepository usersConnectionRepository, UserIdSource userIdSource) {
 		this.usersConnectionRepository = usersConnectionRepository;
 		this.userIdSource = userIdSource;		
 	}
@@ -49,7 +48,7 @@ public class FacebookApiHelper implements ApiHelper<Facebook> {
 		if (logger.isDebugEnabled() && connection == null) {
 			logger.debug("No current connection; Returning default FacebookTemplate instance.");
 		}
-		return connection != null ? connection.getApi() : new FacebookTemplate();
+		return connection != null ? connection.getApi() : null;
 	}
 
 	private final static Log logger = LogFactory.getLog(FacebookApiHelper.class);

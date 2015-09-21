@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,112 +27,16 @@ import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.social.NotAuthorizedException;
 import org.springframework.social.facebook.api.Page.PriceRange;
 
 /**
  * @author Craig Walls
  */
 public class PageTemplateTest extends AbstractFacebookApiTest {
-	
-	@Test
-	@SuppressWarnings("deprecation")
-	public void getPage_organization() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/140804655931206"))
-			.andExpect(method(GET))
-			.andExpect(header("Authorization", "OAuth someAccessToken"))
-				.andRespond(withSuccess(jsonResource("organization-page"), MediaType.APPLICATION_JSON));
-
-		Page page = facebook.pageOperations().getPage("140804655931206");
-		assertEquals("140804655931206", page.getId());
-		assertEquals("SpringSource", page.getName());
-		assertEquals("http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yr/r/fwJFrO5KjAQ.png", page.getPicture());
-		assertEquals("http://www.facebook.com/pages/SpringSource/140804655931206", page.getLink());
-		assertEquals(33, page.getLikes());
-		assertEquals("Organization", page.getCategory());
-		assertEquals("<p><b>SpringSource</b> is a division of <a href=\"http://en.wikipedia.org/wiki/VMware\" class=\"wikipedia\">VMware</a> that provides...</p>", page.getDescription());
-		assertEquals("SpringSource offers a product suite to build, run & manage enterprise Java applications.  Please join the SpringSource Group here: http://www.facebook.com/groups/10463298884/", page.getAbout());
-		assertFalse(page.canPost());
-		assertTrue(page.isPublished());
-		assertFalse(page.isCommunityPage());
-		assertFalse(page.hasAddedApp());
-		assertEquals(19, page.getTalkingAboutCount());
-	}
 
 	@Test
-	@SuppressWarnings("deprecation")
-	public void getPage_product() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/21278871488"))
-			.andExpect(method(GET))
-			.andExpect(header("Authorization", "OAuth someAccessToken"))
-				.andRespond(withSuccess(jsonResource("product-page"), MediaType.APPLICATION_JSON));
-
-		Page page = facebook.pageOperations().getPage("21278871488");
-		assertEquals("21278871488", page.getId());
-		assertEquals("Mountain Dew", page.getName());
-		assertEquals("http://profile.ak.fbcdn.net/hprofile-ak-snc4/203494_21278871488_3106566_s.jpg", page.getPicture());
-		assertEquals("http://www.facebook.com/mountaindew", page.getLink());
-		assertEquals(5083988, page.getLikes());
-		assertEquals("Food/beverages", page.getCategory());
-		assertEquals("www.mountaindew.com\nwww.greenlabelsound.com\nwww.greenlabelart.com\nwww.honorthecode.com\nwww.dietdewchallenge.com\nwww.twitter.com/mtn_dew\nwww.youtube.com/mountaindew", page.getWebsite());
-		assertEquals("This is How We DEW", page.getAbout());
-		assertTrue(page.canPost());
-		CoverPhoto coverPhoto = page.getCover();
-		assertEquals("10151582481816489", coverPhoto.getId());
-		assertEquals("http://sphotos-g.ak.fbcdn.net/hphotos-ak-ash3/s720x720/942964_10151582481816489_61037109_n.jpg", coverPhoto.getSource());
-		assertEquals(20, coverPhoto.getOffsetX());
-		assertEquals(10, coverPhoto.getOffsetY());
-		assertTrue(page.isPublished());
-		assertTrue(page.isCommunityPage());
-		assertTrue(page.hasAddedApp());
-		assertEquals(32597, page.getTalkingAboutCount());
-	}
-
-	@Test
-	@SuppressWarnings("deprecation")
-	public void getPage_place() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/150263434985489"))
-			.andExpect(method(GET))
-			.andExpect(header("Authorization", "OAuth someAccessToken"))
-				.andRespond(withSuccess(jsonResource("place-page"), MediaType.APPLICATION_JSON));
-
-		Page page = facebook.pageOperations().getPage("150263434985489");
-		assertEquals("150263434985489", page.getId());
-		assertEquals("Denver International Airport", page.getName());
-		assertEquals("http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yZ/r/u3l2nEuXNsK.png", page.getPicture());
-		assertEquals("http://www.facebook.com/pages/Denver-International-Airport/150263434985489", page.getLink());
-		assertEquals(1052, page.getLikes());
-		assertEquals("Local business", page.getCategory());
-		assertEquals("http://flydenver.com", page.getWebsite());
-		assertEquals("Denver", page.getLocation().getCity());
-		assertEquals("CO", page.getLocation().getState());
-		assertEquals("United States", page.getLocation().getCountry());
-		assertEquals(39.851693483111, page.getLocation().getLatitude(), 0.0001);
-		assertEquals(-104.67384947947, page.getLocation().getLongitude(), 0.0001);
-		assertEquals("(303) 342-2000", page.getPhone());
-		assertEquals(121661, page.getCheckins());
-		assertFalse(page.canPost());
-		assertFalse(page.isPublished());
-		assertFalse(page.isCommunityPage());
-		assertFalse(page.hasAddedApp());
-		assertEquals(15062, page.getTalkingAboutCount());
-		assertNull(page.getHours());
-		RestaurantSpecialties restaurantSpecialties = page.getRestaurantSpecialties();
-		assertFalse(restaurantSpecialties.hasBreakfast());
-		assertFalse(restaurantSpecialties.hasCoffee());
-		assertTrue(restaurantSpecialties.hasLunch());
-		assertTrue(restaurantSpecialties.hasDrinks());
-		assertTrue(restaurantSpecialties.hasDinner());
-		ParkingInfo parking = page.getParking();
-		assertTrue(parking.hasLot());
-		assertFalse(parking.hasStreet());
-		assertFalse(parking.hasValet());
-	}
-
-	@Test
-	@SuppressWarnings("deprecation")
 	public void getPage_place_with_hours() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/220817147947513"))
+		mockServer.expect(requestTo(fbUrl("220817147947513")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("place-with-hours-page"), MediaType.APPLICATION_JSON));
@@ -175,7 +79,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getPage_application() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/140372495981006"))
+		mockServer.expect(requestTo(fbUrl("140372495981006")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("application-page"), MediaType.APPLICATION_JSON));
@@ -192,7 +96,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void getPage_withExtraData() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/11803178355"))
+		mockServer.expect(requestTo(fbUrl("11803178355")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("page-with-extra-data"), MediaType.APPLICATION_JSON));
@@ -203,16 +107,16 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("https://www.facebook.com/pages/A-Scanner-Darkly/11803178355", page.getLink());
 		assertNull(page.getDescription());
 		Map<String, Object> extraData = page.getExtraData();
-		assertEquals("Warner Independent Pictures", extraData.get("studio"));
+		assertEquals("This is extra data", extraData.get("extra_data"));
 		assertEquals(0, page.getWereHereCount());
-		assertEquals("Keanu Reeves, Robert Downey Jr., Woody Harrelson, Winona Ryder, Rory Cochrane", extraData.get("starring"));
-		assertEquals("Richard Linklater based on Philip K. Dick's novel", extraData.get("screenplay_by"));
-		assertEquals("2007", extraData.get("release_date"));
-		assertEquals("Steven Soderbergh and George Clooney (Executive Producers)", extraData.get("produced_by"));
-		assertTrue(extraData.get("plot_outline").toString().startsWith("In the future \"seven years from now\", America has lost the war on drugs. A highly addictive and debilitating illegal drug called Substance D, distilled from small blue flowers"));
-		assertEquals("Science Fiction", extraData.get("genre"));
+		assertEquals("Keanu Reeves, Robert Downey Jr., Woody Harrelson, Winona Ryder, Rory Cochrane", page.getStarring());
+		assertEquals("Richard Linklater based on Philip K. Dick's novel", page.getScreenplayBy());
+		assertEquals("2007", page.getReleaseDate());
+		assertEquals("Steven Soderbergh and George Clooney (Executive Producers)", page.getProducedBy());
+		assertTrue(page.getPlotOutline().startsWith("In the future \"seven years from now\", America has lost the war on drugs. A highly addictive and debilitating illegal drug called Substance D, distilled from small blue flowers"));
+		assertEquals("Science Fiction", page.getGenre());
 		assertEquals("Richard Linklater", page.getDirectedBy());
-		assertEquals("Winner of Best Animation award OFCS Awards 2007", extraData.get("awards"));
+		assertEquals("Winner of Best Animation award OFCS Awards 2007", page.getAwards());
 		Map<String, Object> embedded = (Map<String, Object>) extraData.get("embedded");
 		assertEquals("y", embedded.get("x"));
 		assertEquals(2, embedded.get("a"));
@@ -229,11 +133,6 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 		assertTrue(facebook.pageOperations().isPageAdmin("1212121212"));
 	}
 	
-
-	@Test(expected = NotAuthorizedException.class)
-	public void isPageAdmin_unauthorized() {
-		unauthorizedFacebook.pageOperations().isPageAdmin("2468013579");
-	}
 	
 	@Test
 	public void getAccounts() {
@@ -251,59 +150,89 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	}
 
 	@Test
+	public void getAccount() {
+		expectFetchAccounts();
+		Account account = facebook.pageOperations().getAccount("987654321");
+		assertEquals("987654321", account.getId());
+		assertEquals("Test Page", account.getName());
+		assertEquals("Page", account.getCategory());
+		assertEquals("pageAccessToken", account.getAccessToken());
+	}
+
+	@Test
+	public void getAccount_missingAccount() throws Exception {
+		expectFetchAccounts();
+		assertNull(facebook.pageOperations().getAccount("BOGUS"));
+	}
+	
+	@Test
+	public void getAccessToken() {
+		expectFetchAccounts();
+		assertEquals("pageAccessToken", facebook.pageOperations().getAccessToken("987654321"));
+	}
+
+	@Test(expected=PageAdministrationException.class)
+	public void getAccessToken_missingAccount() {
+		expectFetchAccounts();
+		facebook.pageOperations().getAccessToken("BOGUS");
+	}
+
+	@Test
 	public void post_message() throws Exception {
 		expectFetchAccounts();
 		String requestBody = "message=Hello+Facebook+World&access_token=pageAccessToken";
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/987654321/feed"))
+		mockServer.expect(requestTo(fbUrl("987654321/feed")))
 				.andExpect(method(POST))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andExpect(content().string(requestBody))
 				.andRespond(withSuccess("{\"id\":\"123456_78901234\"}", MediaType.APPLICATION_JSON));
-		assertEquals("123456_78901234", facebook.pageOperations().post("987654321", "Hello Facebook World"));
+		new PostData("987654321").message("Hello Facebook World");
+		assertEquals("123456_78901234", facebook.pageOperations().post(new PagePostData("987654321").message("Hello Facebook World")));
 		mockServer.verify();
 	}
 
 	@Test(expected = PageAdministrationException.class)
 	public void postMessage_notAdmin() throws Exception {
 		expectFetchAccounts();
-		facebook.pageOperations().post("2468013579", "Hello Facebook World");
-	}
-
-	@Test(expected = NotAuthorizedException.class)
-	public void postMessage_unauthorized() {
-		unauthorizedFacebook.pageOperations().post("2468013579", "Hello Facebook World");
+		facebook.pageOperations().post(new PagePostData("2468013579").message("Hello Facebook World"));
 	}
 
 	@Test
 	public void postLink() throws Exception {
 		expectFetchAccounts();
-		String requestBody = "link=someLink&name=some+name&caption=some+caption&description=some+description&message=Hello+Facebook+World&access_token=pageAccessToken";
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/987654321/feed")).andExpect(method(POST))
+		String requestBody = "message=Hello+Facebook+World&link=someLink&name=some+name&caption=some+caption&description=some+description&access_token=pageAccessToken";
+		mockServer.expect(requestTo(fbUrl("987654321/feed")))
+				.andExpect(method(POST))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andExpect(content().string(requestBody))
 				.andRespond(withSuccess("{\"id\":\"123456_78901234\"}", MediaType.APPLICATION_JSON));
-		FacebookLink link = new FacebookLink("someLink", "some name", "some caption", "some description");
-		assertEquals("123456_78901234", facebook.pageOperations().post("987654321", "Hello Facebook World", link));
+		assertEquals("123456_78901234", facebook.pageOperations().post(new PagePostData("987654321").message("Hello Facebook World").link("someLink", null, "some name", "some caption", "some description")));
+		mockServer.verify();
+	}
+
+	@Test
+	public void postLink_withPicture() throws Exception {
+		expectFetchAccounts();
+		String requestBody = "message=Hello+Facebook+World&link=someLink&name=some+name&caption=some+caption&description=some+description&picture=somePic&access_token=pageAccessToken";
+		mockServer.expect(requestTo(fbUrl("987654321/feed")))
+				.andExpect(method(POST))
+				.andExpect(header("Authorization", "OAuth someAccessToken"))
+				.andExpect(content().string(requestBody))
+				.andRespond(withSuccess("{\"id\":\"123456_78901234\"}", MediaType.APPLICATION_JSON));
+		assertEquals("123456_78901234", facebook.pageOperations().post(new PagePostData("987654321").message("Hello Facebook World").link("someLink", "somePic", "some name", "some caption", "some description")));
 		mockServer.verify();
 	}
 
 	@Test(expected = PageAdministrationException.class)
 	public void postLink_notAdmin() throws Exception {
 		expectFetchAccounts();
-		FacebookLink link = new FacebookLink("someLink", "some name", "some caption", "some description");
-		facebook.pageOperations().post("2468013579", "Hello Facebook World", link);
-	}
-
-	@Test(expected = NotAuthorizedException.class)
-	public void postLink_unauthorized() {
-		FacebookLink link = new FacebookLink("someLink", "some name", "some caption", "some description");
-		unauthorizedFacebook.pageOperations().post("2468013579", "Hello Facebook World", link);
+		facebook.pageOperations().post(new PagePostData("2468013579").message("Hello Facebook World").link("someLink", null, "some name", "some caption", "some description"));
 	}
 
 	@Test
 	public void postPhoto_noCaption() {
 		expectFetchAccounts();
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/photos"))
+		mockServer.expect(requestTo(fbUrl("192837465/photos")))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -313,15 +242,10 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("12345", photoId);
 	}
 
-	@Test(expected = NotAuthorizedException.class)
-	public void postPhoto_noCaption_unauthorized() {
-		unauthorizedFacebook.pageOperations().postPhoto("987654321", "192837465", null);
-	}
-	
 	@Test
 	public void postPhoto_withCaption() {
 		expectFetchAccounts();
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/photos"))
+		mockServer.expect(requestTo(fbUrl("192837465/photos")))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -331,18 +255,13 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("12345", photoId);
 	}
 	
-	@Test(expected = NotAuthorizedException.class)
-	public void postPhoto_withCaption_unauthorized() {
-		unauthorizedFacebook.pageOperations().postPhoto("987654321", "192837465", null, "Some caption");
-	}
-
 	@Test
 	public void search() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/search?q=coffee&type=place&center=33.050278%2C-96.745833&distance=5280"))
+		mockServer.expect(requestTo(fbUrl("search?q=coffee&type=place&center=33.050278%2C-96.745833&distance=5280")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("places-list"), MediaType.APPLICATION_JSON));
-		List<Page> places = facebook.pageOperations().search("coffee", 33.050278, -96.745833, 5280);
+		List<Page> places = facebook.pageOperations().searchPlaces("coffee", 33.050278, -96.745833, 5280);
 		assertEquals(2, places.size());
 		assertEquals("117723491586638", places.get(0).getId());
 		assertEquals("True Brew Coffee & Espresso Service", places.get(0).getName());
@@ -366,15 +285,10 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 		assertEquals(-96.795133, places.get(1).getLocation().getLongitude(), 0.00001);		
 	}
 
-	@Test(expected = NotAuthorizedException.class)
-	public void search_unauthorized() {
-		unauthorizedFacebook.pageOperations().search("coffee", 33.050278, -96.745833, 5280);
-	}
-
 	// private helpers
 	
 	private void expectFetchAccounts() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/accounts"))
+		mockServer.expect(requestTo(fbUrl("me/accounts")))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("accounts"), MediaType.APPLICATION_JSON));

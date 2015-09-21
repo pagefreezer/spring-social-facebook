@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import java.util.List;
-
 import org.springframework.social.facebook.api.Achievement;
 import org.springframework.social.facebook.api.AchievementOperations;
 import org.springframework.social.facebook.api.AchievementType;
@@ -24,12 +22,13 @@ import org.springframework.social.facebook.api.GraphApi;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-class AchievementTemplate extends AbstractFacebookOperations implements AchievementOperations {
+import java.util.List;
+
+class AchievementTemplate implements AchievementOperations {
 
 	private GraphApi graphApi;
 	
-	public AchievementTemplate(GraphApi graphApi, boolean isAuthorized) {
-		super(isAuthorized);
+	public AchievementTemplate(GraphApi graphApi) {
 		this.graphApi = graphApi;
 	}
 
@@ -65,7 +64,7 @@ class AchievementTemplate extends AbstractFacebookOperations implements Achievem
 	}
 
 	public void createAchievementType(String achievementTypeUrl, int displayOrder) {
-		MultiValueMap<String, String> data = new LinkedMultiValueMap<String, String>();
+		MultiValueMap<String, Object> data = new LinkedMultiValueMap<String, Object>();
 		data.set("achievement", achievementTypeUrl);
 		data.set("display_order", String.valueOf(displayOrder));
 		graphApi.post("app", "achievements", data);

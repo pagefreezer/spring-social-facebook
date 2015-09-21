@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ public class CanvasSignInController {
 					String clientId = (String) model.get("clientId");
 					String canvasPage = (String) model.get("canvasPage");
 					String scope = (String) model.get("scope");
-					String redirectUrl = "https://www.facebook.com/v1.0/dialog/oauth?client_id=" + clientId + "&redirect_uri=" + canvasPage;
+					String redirectUrl = "https://www.facebook.com/v2.3/dialog/oauth?client_id=" + clientId + "&redirect_uri=" + canvasPage;
 					if (scope != null) {
 						redirectUrl += "&scope=" + formEncode(scope);
 					}

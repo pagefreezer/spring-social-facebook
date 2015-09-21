@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.social.NotAuthorizedException;
 import org.springframework.social.UncategorizedApiException;
-import org.springframework.social.facebook.api.AchievementOperations;
-import org.springframework.social.facebook.api.CommentOperations;
-import org.springframework.social.facebook.api.EventOperations;
-import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.FeedOperations;
-import org.springframework.social.facebook.api.FqlOperations;
-import org.springframework.social.facebook.api.FriendOperations;
-import org.springframework.social.facebook.api.GroupOperations;
-import org.springframework.social.facebook.api.ImageType;
-import org.springframework.social.facebook.api.LikeOperations;
-import org.springframework.social.facebook.api.MediaOperations;
-import org.springframework.social.facebook.api.OpenGraphOperations;
-import org.springframework.social.facebook.api.PageOperations;
-import org.springframework.social.facebook.api.PagedList;
-import org.springframework.social.facebook.api.PagingParameters;
-import org.springframework.social.facebook.api.UserOperations;
+import org.springframework.social.facebook.api.*;
 import org.springframework.social.facebook.api.impl.json.FacebookModule;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.oauth2.OAuth2Version;
@@ -70,6 +55,8 @@ import static org.springframework.social.facebook.api.impl.PagedListUtils.getPag
  */
 public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebook {
 
+	private String appId;
+	
 	private AchievementOperations achievementOperations;
 	
 	private UserOperations userOperations;
@@ -79,9 +66,9 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	private FeedOperations feedOperations;
 	
 	private GroupOperations groupOperations;
-
+	
 	private CommentOperations commentOperations;
-
+	
 	private LikeOperations likeOperations;
 	
 	private EventOperations eventOperations;
@@ -90,25 +77,15 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	
 	private PageOperations pageOperations;
 	
-	private FqlOperations fqlOperations;
-	
 	private OpenGraphOperations openGraphOperations;
-
+	
+	private SocialContextOperations socialContextOperations;
+	
+	private TestUserOperations testUserOperations;
+	
 	private ObjectMapper objectMapper;
 
 	private String applicationNamespace;
-
-	/**
-	 * Create a new instance of FacebookTemplate.
-	 * This constructor creates a new FacebookTemplate able to perform unauthenticated operations against Facebook's Graph API.
-	 * Some operations do not require OAuth authentication. 
-	 * For example, retrieving a specified user's profile or feed does not require authentication (although the data returned will be limited to what is publicly available). 
-	 * A FacebookTemplate created with this constructor will support those operations.
-	 * Those operations requiring authentication will throw {@link NotAuthorizedException}.
-	 */
-	public FacebookTemplate() {
-		initialize();		
-	}
 
 	/**
 	 * Create a new instance of FacebookTemplate.
@@ -118,10 +95,15 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	public FacebookTemplate(String accessToken) {
 		this(accessToken, null);
 	}
-	
+
 	public FacebookTemplate(String accessToken, String applicationNamespace) {
+		this(accessToken, applicationNamespace, null);
+	}
+	
+	public FacebookTemplate(String accessToken, String applicationNamespace, String appId) {
 		super(accessToken);
 		this.applicationNamespace = applicationNamespace;
+		this.appId = appId;
 		initialize();
 	}
 	
@@ -175,16 +157,20 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 		return getRestTemplate();
 	}
 	
-	public FqlOperations fqlOperations() {
-		return fqlOperations;
-	}
-	
 	public OpenGraphOperations openGraphOperations() {
 		return openGraphOperations;
 	}
 	
+	public SocialContextOperations socialContextOperations() {
+		return socialContextOperations;
+	}
+	
 	public String getApplicationNamespace() {
 		return applicationNamespace;
+	}
+	
+	public TestUserOperations testUserOperations() {
+		return testUserOperations;
 	}
 	
 	// low-level Graph API operations
@@ -237,16 +223,26 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 		}
 		return fetchPagedConnections(objectId, connectionType, type, queryParameters);
 	}
-
-	protected <T> PagedList<T> pagify(Class<T> type, JsonNode jsonNode) {
+	
+	private <T> PagedList<T> pagify(Class<T> type, JsonNode jsonNode) {
 		List<T> data = deserializeDataList(jsonNode.get("data"), type);
-		if (jsonNode.has("paging")) {
-			JsonNode pagingNode = jsonNode.get("paging");
-			PagingParameters previousPage = getPagedListParameters(pagingNode, "previous");
-			PagingParameters nextPage = getPagedListParameters(pagingNode, "next");
-			return new PagedList<T>(data, previousPage, nextPage);
+		if (!jsonNode.has("paging")) {
+			return new PagedList<T>(data, null, null);
 		}
-		return new PagedList<T>(data, null, null);
+		
+		JsonNode pagingNode = jsonNode.get("paging");
+		PagingParameters previousPage = getPagedListParameters(pagingNode, "previous");
+		PagingParameters nextPage = getPagedListParameters(pagingNode, "next");
+		
+		Integer totalCount = null;
+		if (jsonNode.has("summary")) {
+			JsonNode summaryNode = jsonNode.get("summary");
+			if (summaryNode.has("total_count")) {
+				totalCount = summaryNode.get("total_count").intValue();
+			}
+		}
+		
+		return new PagedList<T>(data, previousPage, nextPage, totalCount);
 	}
 
 	public byte[] fetchImage(String objectId, String connectionType, ImageType type) {
@@ -271,9 +267,14 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 		return (String) response.get("id");
 	}
 	
-	public void post(String objectId, String connectionType, MultiValueMap<String, String> data) {
-		URI uri = URIBuilder.fromUri(GRAPH_API_URL + objectId + "/" + connectionType).build();
-		getRestTemplate().postForObject(uri, new LinkedMultiValueMap<String, String>(data), String.class);
+	public void post(String objectId, MultiValueMap<String, Object> data) {
+		post(objectId, null, data);
+	}
+	
+	public void post(String objectId, String connectionType, MultiValueMap<String, Object> data) {
+		String connectionPath = connectionType != null ? "/" + connectionType : "";
+		URI uri = URIBuilder.fromUri(GRAPH_API_URL + objectId + connectionPath).build();
+		getRestTemplate().postForObject(uri, new LinkedMultiValueMap<String, Object>(data), String.class);
 	}
 	
 	public void delete(String objectId) {
@@ -325,18 +326,19 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	}
 		
 	private void initSubApis() {
-		achievementOperations = new AchievementTemplate(this, isAuthorized());
-		openGraphOperations = new OpenGraphTemplate(this, isAuthorized());
+		achievementOperations = new AchievementTemplate(this);
+		openGraphOperations = new OpenGraphTemplate(this);
 		userOperations = new UserTemplate(this, getRestTemplate(), isAuthorized());
 		friendOperations = new FriendTemplate(this, getRestTemplate(), isAuthorized());
 		feedOperations = new FeedTemplate(this, getRestTemplate(), objectMapper, isAuthorized());
-		commentOperations = new CommentTemplate(this, isAuthorized());
-		likeOperations = new LikeTemplate(this, isAuthorized());
-		eventOperations = new EventTemplate(this, isAuthorized());
+		commentOperations = new CommentTemplate(this);
+		likeOperations = new LikeTemplate(this);
+		eventOperations = new EventTemplate(this);
 		mediaOperations = new MediaTemplate(this, getRestTemplate(), isAuthorized());
-		groupOperations = new GroupTemplate(this, isAuthorized());
-		pageOperations = new PageTemplate(this, isAuthorized());
-		fqlOperations = new FqlTemplate(this, isAuthorized());
+		groupOperations = new GroupTemplate(this);
+		pageOperations = new PageTemplate(this);
+		testUserOperations = new TestUserTemplate(getRestTemplate(), appId);
+		socialContextOperations = new SocialContextTemplate(getRestTemplate());
 	}
 	
 	@SuppressWarnings("unchecked")

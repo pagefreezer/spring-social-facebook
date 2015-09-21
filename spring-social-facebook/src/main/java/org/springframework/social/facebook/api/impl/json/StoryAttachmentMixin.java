@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
  */
 package org.springframework.social.facebook.api.impl.json;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.social.facebook.api.ImageSource;
 import org.springframework.social.facebook.api.StoryAttachment.StoryAttachmentMedia;
 import org.springframework.social.facebook.api.StoryAttachment.StoryAttachmentTarget;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 

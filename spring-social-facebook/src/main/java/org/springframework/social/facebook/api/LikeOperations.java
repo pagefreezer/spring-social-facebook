@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,25 +70,25 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of pages that the given user has liked. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_likes" or "friends_likes" permission.
+	 * @throws InsufficientPermissionException if the user has not granted "user_likes" permission.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Page> getPagesLiked(String userId);
 
 	/**
 	 * Retrieves a list of pages that the given user has liked. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @param pagingParameters the paging parameters for fetching a given range of pages.
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_likes" or "friends_likes" permission.
+	 * @throws InsufficientPermissionException if the user has not granted "user_likes" permission.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Page> getPagesLiked(String userId, PagingParameters pagingParameters);
@@ -97,10 +97,10 @@ public interface LikeOperations {
 	 * Like an object on behalf of the authenticated user.
 	 * The type of object to be liked is limited to Album, Checkin, Comment, Note, Photo, Post, or Video.
 	 * You cannot like a Facebook Page through this API.
-	 * Requires "publish_stream" permission and permission to access the object being liked.
+	 * Requires "publish_actions" permission and permission to access the object being liked.
 	 * @param objectId the object ID
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "publish_stream" permission or if the user does not have permission to access the object.
+	 * @throws InsufficientPermissionException if the user has not granted "publish_actions" permission or if the user does not have permission to access the object.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	void like(String objectId);
@@ -109,10 +109,10 @@ public interface LikeOperations {
 	 * Unlike an object on behalf of the authenticated user.
 	 * The type of object to be liked is limited to Album, Checkin, Comment, Note, Photo, Post, or Video.
 	 * You cannot unlike a Facebook Page through this API.
-	 * Requires "publish_stream" permission and permission to access the object being liked.
+	 * Requires "publish_actions" permission and permission to access the object being liked.
 	 * @param objectId the object ID
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "publish_stream" permission or if the user does not have permission to access the object.
+	 * @throws InsufficientPermissionException if the user has not granted "publish_actions" permission or if the user does not have permission to access the object.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	void unlike(String objectId);
@@ -129,10 +129,9 @@ public interface LikeOperations {
 	PagedList<Page> getBooks();
 
 	/**
-	 * Retrieves a list of books that the given user has liked. Requires
-	 * "user_likes" permission for the authenticated user and "friends_likes"
-	 * for the authenticated user's friends. Returns an empty list if permission
-	 * isn't granted.
+	 * Retrieves a list of books that the given user has liked. 
+	 * Requires "user_likes" permission 
+	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
@@ -154,10 +153,9 @@ public interface LikeOperations {
 	PagedList<Page> getBooks(PagingParameters pagingParameters);
 
 	/**
-	 * Retrieves a list of books that the given user has liked. Requires
-	 * "user_likes" permission for the authenticated user and "friends_likes"
-	 * for the authenticated user's friends. Returns an empty list if permission
-	 * isn't granted.
+	 * Retrieves a list of books that the given user has liked. 
+	 * Requires "user_likes" permission 
+	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @param pagingParameters the paging parameters for fetching a given range of pages.
 	 * @return a list of {@link Page} objects
@@ -180,7 +178,7 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of movies that the given user has liked. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @return a list of {@link Page} objects
@@ -204,7 +202,7 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of movies that the given user has liked. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @param pagingParameters the paging parameters for fetching a given range of pages.
@@ -228,7 +226,7 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of music that the given user has liked. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @return a list of {@link Page} objects
@@ -252,7 +250,7 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of music that the given user has liked. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @param pagingParameters the paging parameters for fetching a given range of pages.
@@ -276,12 +274,12 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of television shows that the given user has liked.
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_likes" or "friends_likes" permission.
+	 * @throws InsufficientPermissionException if the user has not granted "user_likes" permission.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Page> getTelevision(String userId);
@@ -300,112 +298,16 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of television shows that the given user has liked.
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @param pagingParameters the paging parameters for fetching a given range of pages.
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_likes" or "friends_likes" permission.
+	 * @throws InsufficientPermissionException if the user has not granted "user_likes" permission.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Page> getTelevision(String userId, PagingParameters pagingParameters);
-
-	/**
-	 * Retrieves a list of activities that the authenticated user likes.
-	 * Requires "user_activities" permission. 
-	 * Returns an empty list if permission isn't granted.
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_activities" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getActivities();
-
-	/**
-	 * Retrieves a list of activities that the given user likes. 
-	 * Requires "user_activities" permission for the authenticated user and "friends_activities" for the authenticated user's friends. 
-	 * Returns an empty list if permission isn't granted.
-	 * @param userId the ID of the user
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_activities" or "friends_activities" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getActivities(String userId);
-
-	/**
-	 * Retrieves a list of activities that the authenticated user likes.
-	 * Requires "user_activities" permission. 
-	 * Returns an empty list if permission isn't granted.
-	 * @param pagingParameters the paging parameters for fetching a given range of pages.
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_activities" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getActivities(PagingParameters pagingParameters);
-
-	/**
-	 * Retrieves a list of activities that the given user likes. 
-	 * Requires "user_activities" permission for the authenticated user and "friends_activities" for the authenticated user's friends. 
-	 * Returns an empty list if permission isn't granted.
-	 * @param userId the ID of the user
-	 * @param pagingParameters the paging parameters for fetching a given range of pages.
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_activities" or "friends_activities" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getActivities(String userId, PagingParameters pagingParameters);
-
-	/**
-	 * Retrieves a list of interests that the authenticated user likes. 
-	 * Requires "user_interests" permission. 
-	 * Returns an empty list if permission isn't granted.
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_interests" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getInterests();
-
-	/**
-	 * Retrieves a list of interests that the given user likes. 
-	 * Requires "user_interests" permission for the authenticated user and "friends_interests" for the authenticated user's friends. 
-	 * Returns an empty list if permission isn't granted.
-	 * @param userId the ID of the user
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_interests" or "friends_interests" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getInterests(String userId);
-
-	/**
-	 * Retrieves a list of interests that the authenticated user likes. 
-	 * Requires "user_interests" permission. 
-	 * Returns an empty list if permission isn't granted.
-	 * @param pagingParameters the paging parameters for fetching a given range of pages.
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_interests" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getInterests(PagingParameters pagingParameters);
-
-	/**
-	 * Retrieves a list of interests that the given user likes. 
-	 * Requires "user_interests" permission for the authenticated user and "friends_interests" for the authenticated user's friends. 
-	 * Returns an empty list if permission isn't granted.
-	 * @param userId the ID of the user
-	 * @param pagingParameters the paging parameters for fetching a given range of pages.
-	 * @return a list of {@link Page} objects
-	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_interests" or "friends_interests" permission.
-	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
-	 */
-	PagedList<Page> getInterests(String userId, PagingParameters pagingParameters);
 
 	/**
 	 * Retrieves a list of games that the authenticated user likes. 
@@ -420,12 +322,12 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of games that the given user likes. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_likes" or "friends_likes" permission.
+	 * @throws InsufficientPermissionException if the user has not granted "user_likes" permission.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Page> getGames(String userId);
@@ -444,13 +346,13 @@ public interface LikeOperations {
 
 	/**
 	 * Retrieves a list of games that the given user likes. 
-	 * Requires "user_likes" permission for the authenticated user and "friends_likes" for the authenticated user's friends. 
+	 * Requires "user_likes" permission 
 	 * Returns an empty list if permission isn't granted.
 	 * @param userId the ID of the user
 	 * @param pagingParameters the paging parameters for fetching a given range of pages.
 	 * @return a list of {@link Page} objects
 	 * @throws ApiException if there is an error while communicating with Facebook.
-	 * @throws InsufficientPermissionException if the user has not granted "user_likes" or "friends_likes" permission.
+	 * @throws InsufficientPermissionException if the user has not granted "user_likes" permission.
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	PagedList<Page> getGames(String userId, PagingParameters pagingParameters);

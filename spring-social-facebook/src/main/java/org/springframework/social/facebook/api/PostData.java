@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.springframework.social.facebook.api;
 
-import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -75,36 +74,16 @@ public class PostData {
 
 	/**
 	 * @param linkUrl A link to include in the post.
-	 * @return the PostData object for additional configuration
+	 * @param picture A preview image associated with the link. May be null.
+	 * @param name Overwrites the title of the link preview. May be null.
+	 * @param caption Overwrites the caption of the link preview. May be null.
+	 * @param description Overwrites the caption of hte link preview. May be null.
+	 * @return the PagePostData object for additional configuration
 	 */
-	public PostData link(String linkUrl) {
+	public PostData link(String linkUrl, String picture, String name, String caption, String description) {
 		this.linkUrl = linkUrl;
-		return this;
-	}
-	
-	/**
-	 * @param name A name (e.g., title) for the post.
-	 * @return the PostData object for additional configuration
-	 */
-	public PostData name(String name) {
 		this.name = name;
-		return this;
-	}
-	
-	/**
-	 * @param caption A caption for the post.
-	 * @return the PostData object for additional configuration
-	 */
-	public PostData caption(String caption) {
 		this.caption = caption;
-		return this;
-	}
-	
-	/**
-	 * @param description A description of the post.
-	 * @return the PostData object for additional configuration
-	 */
-	public PostData description(String description) {
 		this.description = description;
 		return this;
 	}
@@ -127,15 +106,6 @@ public class PostData {
 		return this;
 	}
 
-	/**
-	 * @param picture The URL to a picture to embed in the post
-	 * @return the PostData object for additional configuration
-	 */
-	public PostData picture(String picture) {
-		this.picture = picture;
-		return this;
-	}
-	
 	/**
 	 * @param privacy The privacy setting for the post. If CUSTOM, then you must also set at least one of allow() or deny().
 	 * @return the PostData object for additional configuration
@@ -177,12 +147,12 @@ public class PostData {
 			if (tags != null) { parameters.add("tags", StringUtils.arrayToCommaDelimitedString(tags)); }
 		}
 		
-		// TODO: Revisit posting with Privacy
-		
+//		// TODO: Revisit posting with Privacy
+//		
 //		if (privacy != null) {
 //			StringBuffer privacyBuffer = new StringBuffer();
 //			privacyBuffer.append("{'value': '").append(privacy.toString()).append("'");
-//			if (privacy == Privacy.CUSTOM) {
+//			if (privacy.getValue() == PrivacyType.CUSTOM) {
 //				if (allow == null && deny == null) {
 //					throw new IllegalArgumentException("At least one of 'deny' or 'allow' must be specified when privacy is CUSTOM.");
 //				}
@@ -199,18 +169,18 @@ public class PostData {
 
 		return parameters;
 	}
-
-	// TODO: Extract this into some utility, as it comes in handy in several places
-	private String join(String... strings) {
-		Assert.notEmpty(strings);
-		StringBuilder builder = new StringBuilder();
-		builder.append(strings[0]);
-		if (strings.length > 1) {
-			for (int i=1; i<strings.length; i++) {
-				builder.append(",").append(strings[i]);
-			}
-		}
-		return builder.toString();
-	}
+//
+//	// TODO: Extract this into some utility, as it comes in handy in several places
+//	private String join(String... strings) {
+//		Assert.notEmpty(strings);
+//		StringBuilder builder = new StringBuilder();
+//		builder.append(strings[0]);
+//		if (strings.length > 1) {
+//			for (int i=1; i<strings.length; i++) {
+//				builder.append(",").append(strings[i]);
+//			}
+//		}
+//		return builder.toString();
+//	}
 
 }

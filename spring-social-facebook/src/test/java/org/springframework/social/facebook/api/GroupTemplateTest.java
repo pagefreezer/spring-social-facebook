@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.springframework.http.MediaType;
-import org.springframework.social.NotAuthorizedException;
 
 
 public class GroupTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getGroup() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/213106022036379"))
+		mockServer.expect(requestTo(fbUrl("213106022036379")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("group"), MediaType.APPLICATION_JSON));
@@ -50,7 +49,7 @@ public class GroupTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void getMembers() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/213106022036379/members"))
+		mockServer.expect(requestTo(fbUrl("213106022036379/members")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("group-members"), MediaType.APPLICATION_JSON));
@@ -66,25 +65,20 @@ public class GroupTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("Chuck Wagon", members.get(2).getName());
 		assertTrue(members.get(2).isAdministrator());
 	}
-
-	@Test(expected = NotAuthorizedException.class)
-	public void getMembers_unauthorized() {
-		unauthorizedFacebook.groupOperations().getMembers("213106022036379");
-	}
 	
 	@Test
 	public void getMemberProfiles() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/213106022036379/members?fields=id%2Cname%2Cfirst_name%2Clast_name%2Cgender%2Clocale%2Ceducation%2Cwork%2Cemail%2Cthird_party_id%2Clink%2Ctimezone%2Cupdated_time%2Cverified%2Cabout%2Cbio%2Cbirthday%2Clocation%2Chometown%2Cinterested_in%2Creligion%2Cpolitical%2Cquotes%2Crelationship_status%2Csignificant_other%2Cwebsite"))
+		mockServer.expect(requestTo(fbUrl("213106022036379/members?fields=id%2Cname%2Cfirst_name%2Clast_name%2Cgender%2Clocale%2Ceducation%2Cwork%2Cemail%2Cthird_party_id%2Clink%2Ctimezone%2Cupdated_time%2Cverified%2Cabout%2Cbio%2Cbirthday%2Clocation%2Chometown%2Cinterested_in%2Creligion%2Cpolitical%2Cquotes%2Crelationship_status%2Csignificant_other%2Cwebsite")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("group-members"), MediaType.APPLICATION_JSON));
-		List<FacebookProfile> members = facebook.groupOperations().getMemberProfiles("213106022036379");
+		List<User> members = facebook.groupOperations().getMemberProfiles("213106022036379");
 		assertMembers(members);
 	}
 	
 	@Test
 	public void getMemberships_currentUser() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/groups"))
+		mockServer.expect(requestTo(fbUrl("me/groups")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("group-memberships"), MediaType.APPLICATION_JSON));
@@ -94,7 +88,7 @@ public class GroupTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getMemberships_specificUser() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/12345678/groups"))
+		mockServer.expect(requestTo(fbUrl("12345678/groups")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("group-memberships"), MediaType.APPLICATION_JSON));
@@ -104,7 +98,7 @@ public class GroupTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void search() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/search?offset=0&limit=25&q=Spring+User+Group&type=group&fields=owner%2Cname%2Cdescription%2Cprivacy%2Cicon%2Cupdated_time%2Cemail"))
+		mockServer.expect(requestTo(fbUrl("search?offset=0&limit=25&q=Spring+User+Group&type=group&fields=owner%2Cname%2Cdescription%2Cprivacy%2Cicon%2Cupdated_time%2Cemail")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("group-list"), MediaType.APPLICATION_JSON));
@@ -143,7 +137,7 @@ public class GroupTemplateTest extends AbstractFacebookApiTest {
 		assertEquals(toDate("2010-04-01T01:16:44+0000"), results.get(2).getUpdatedTime());
 	}	
 	
-	private void assertMembers(List<FacebookProfile> members) {
+	private void assertMembers(List<User> members) {
 		assertEquals(3, members.size());
 		assertEquals("100001387295207", members.get(0).getId());
 		assertEquals("Art Names", members.get(0).getName());

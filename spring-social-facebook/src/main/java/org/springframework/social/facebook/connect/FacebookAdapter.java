@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,8 @@ import org.springframework.social.connect.ConnectionValues;
 import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.UserProfileBuilder;
 import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.GraphApi;
+import org.springframework.social.facebook.api.User;
 
 /**
  * Facebook ApiAdapter implementation.
@@ -39,15 +40,15 @@ public class FacebookAdapter implements ApiAdapter<Facebook> {
 	}
 
 	public void setConnectionValues(Facebook facebook, ConnectionValues values) {
-		FacebookProfile profile = facebook.userOperations().getUserProfile();
+		User profile = facebook.fetchObject("me", User.class, "id", "name", "link");
 		values.setProviderUserId(profile.getId());
 		values.setDisplayName(profile.getName());
-		values.setProfileUrl("http://facebook.com/profile.php?id=" + profile.getId());
-		values.setImageUrl("http://graph.facebook.com/v1.0/" + profile.getId() + "/picture");
+		values.setProfileUrl(profile.getLink());
+		values.setImageUrl(GraphApi.GRAPH_API_URL + profile.getId() + "/picture");
 	}
 
 	public UserProfile fetchUserProfile(Facebook facebook) {
-		FacebookProfile profile = facebook.userOperations().getUserProfile();
+		User profile = facebook.userOperations().getUserProfile();
 		return new UserProfileBuilder().setName(profile.getName()).setFirstName(profile.getFirstName()).setLastName(profile.getLastName()).
 			setEmail(profile.getEmail()).build();
 	}

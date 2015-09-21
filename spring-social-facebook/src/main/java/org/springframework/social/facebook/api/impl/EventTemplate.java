@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,11 @@ import org.springframework.social.facebook.api.PagingParameters;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-class EventTemplate extends AbstractFacebookOperations implements EventOperations {
+class EventTemplate implements EventOperations {
 			
 	private final GraphApi graphApi;
 
-	public EventTemplate(GraphApi graphApi, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser);
+	public EventTemplate(GraphApi graphApi) {
 		this.graphApi = graphApi;
 	}
 
@@ -61,14 +60,6 @@ class EventTemplate extends AbstractFacebookOperations implements EventOperation
 		return getEventsForUserByStatus("me", "created", pagingParams);
 	}
 	
-	public PagedList<Invitation> getFriendCreated(String friendId) {
-		return getEventsForUserByStatus(friendId, "created", new PagingParameters(25, 0, null, null));
-	}
-
-	public PagedList<Invitation> getFriendCreated(String friendId, PagingParameters pagingParams) {
-		return getEventsForUserByStatus(friendId, "created", pagingParams);
-	}
-
 	public PagedList<Invitation> getAttending() {
 		return getEventsForUserByStatus("me", "attending", new PagingParameters(25, 0, null, null));
 	}
@@ -77,14 +68,6 @@ class EventTemplate extends AbstractFacebookOperations implements EventOperation
 		return getEventsForUserByStatus("me", "attending", pagingParams);
 	}
 	
-	public PagedList<Invitation> getFriendAttending(String friendId) {
-		return getEventsForUserByStatus(friendId, "attending", new PagingParameters(25, 0, null, null));
-	}
-
-	public PagedList<Invitation> getFriendAttending(String friendId, PagingParameters pagingParams) {
-		return getEventsForUserByStatus(friendId, "attending", pagingParams);
-	}
-
 	public PagedList<EventInvitee> getAttending(String eventId) {
 		return graphApi.fetchConnections(eventId, "attending", EventInvitee.class);
 	}
@@ -97,14 +80,6 @@ class EventTemplate extends AbstractFacebookOperations implements EventOperation
 		return getEventsForUserByStatus("me", "maybe", pagingParams);
 	}
 	
-	public PagedList<Invitation> getFriendMaybeAttending(String friendId) {
-		return getEventsForUserByStatus(friendId, "maybe", new PagingParameters(25, 0, null, null));
-	}
-
-	public PagedList<Invitation> getFriendMaybeAttending(String friendId, PagingParameters pagingParams) {
-		return getEventsForUserByStatus(friendId, "maybe", pagingParams);
-	}
-
 	public PagedList<EventInvitee> getMaybeAttending(String eventId) {
 		return graphApi.fetchConnections(eventId, "maybe", EventInvitee.class);
 	}
@@ -117,14 +92,6 @@ class EventTemplate extends AbstractFacebookOperations implements EventOperation
 		return getEventsForUserByStatus("me", "not_replied", pagingParams);
 	}
 	
-	public PagedList<Invitation> getFriendNoReplies(String friendId) {
-		return getEventsForUserByStatus(friendId, "not_replied", new PagingParameters(25, 0, null, null));
-	}
-
-	public PagedList<Invitation> getFriendNoReplies(String friendId, PagingParameters pagingParams) {
-		return getEventsForUserByStatus(friendId, "not_replied", pagingParams);
-	}
-
 	public PagedList<EventInvitee> getNoReplies(String eventId) {
 		return graphApi.fetchConnections(eventId, "noreply", EventInvitee.class);
 	}
@@ -137,31 +104,20 @@ class EventTemplate extends AbstractFacebookOperations implements EventOperation
 		return getEventsForUserByStatus("me", "declined", pagingParams);
 	}
 	
-	public PagedList<Invitation> getFriendDeclined(String friendId) {
-		return getEventsForUserByStatus(friendId, "declined", new PagingParameters(25, 0, null, null));
-	}
-
-	public PagedList<Invitation> getFriendDeclined(String friendId, PagingParameters pagingParams) {
-		return getEventsForUserByStatus(friendId, "declined", pagingParams);
-	}
-
 	public PagedList<EventInvitee> getDeclined(String eventId) {
 		return graphApi.fetchConnections(eventId, "declined", EventInvitee.class);
 	}
 	
 	public void acceptInvitation(String eventId) {
-		requireAuthorization();
-		graphApi.post(eventId, "attending", new LinkedMultiValueMap<String, String>());
+		graphApi.post(eventId, "attending", new LinkedMultiValueMap<String, Object>());
 	}
 
 	public void maybeInvitation(String eventId) {
-		requireAuthorization();
-		graphApi.post(eventId, "maybe", new LinkedMultiValueMap<String, String>());
+		graphApi.post(eventId, "maybe", new LinkedMultiValueMap<String, Object>());
 	}
 
 	public void declineInvitation(String eventId) {
-		requireAuthorization();
-		graphApi.post(eventId, "declined", new LinkedMultiValueMap<String, String>());
+		graphApi.post(eventId, "declined", new LinkedMultiValueMap<String, Object>());
 	}
 	
 	public PagedList<Event> search(String query) {
@@ -182,6 +138,6 @@ class EventTemplate extends AbstractFacebookOperations implements EventOperation
 		return graphApi.fetchConnections(userId, "events/" + status, Invitation.class, parameters);
 	}
 	
-	private static final String[] ALL_FIELDS = { "id", "cover", "description", "end_time", "is_date_only", "location", "name", 
-			"owner", "parent_group", "privacy", "start_time", "ticket_uri", "timezone", "updated_time", "venue" };
+	private static final String[] ALL_FIELDS = { "id", "cover", "description", "end_time", "is_date_only", "name", "owner", 
+		"parent_group", "privacy", "start_time", "ticket_uri", "timezone", "updated_time", "place"};
 }

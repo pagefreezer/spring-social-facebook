@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,21 @@
  */
 package org.springframework.social.facebook.api.impl.json;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.social.facebook.api.*;
-import org.springframework.social.facebook.api.Post.FriendsPrivacyType;
-import org.springframework.social.facebook.api.Post.PostType;
-import org.springframework.social.facebook.api.Post.Privacy;
-import org.springframework.social.facebook.api.Post.PrivacyType;
-import org.springframework.social.facebook.api.Post.StatusType;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.social.facebook.api.*;
+import org.springframework.social.facebook.api.Post.*;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Annotated mixin to add Jackson annotations to Post.
@@ -49,6 +44,9 @@ abstract class PostMixin extends FacebookObjectMixin {
 	
 	@JsonProperty("actions")
 	List<Action> actions;
+	
+	@JsonProperty("admin_creator")
+	AdminCreator adminCreator;
 	
 	@JsonProperty("application")
 	Reference application;
@@ -70,6 +68,13 @@ abstract class PostMixin extends FacebookObjectMixin {
 	
 	@JsonProperty("is_hidden")
 	boolean isHidden;
+	
+	@JsonProperty("is_published")
+	boolean isPublished;
+
+	@JsonProperty("attachments")
+	@JsonDeserialize(using=AttachmentListDeserializer.class)
+	List<StoryAttachment> attachments;
 
 	@JsonProperty("link")
 	String link;
@@ -129,16 +134,31 @@ abstract class PostMixin extends FacebookObjectMixin {
 	Integer sharesCount;
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonDeserialize(using = PrivacyDeserializer.class)
+	public abstract static class AdminCreatorMixin {
+		
+		@JsonProperty("id")
+		String id;
+		
+		@JsonProperty("name")
+		String name;
+		
+		@JsonProperty("namespace")
+		String namespace;
+		
+	}
+	
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public abstract static class PrivacyMixin {
 		
 		@JsonProperty("description")
 		String description;
-
+		
 		@JsonProperty("value")
+		@JsonDeserialize(using = PrivacyTypeDeserializer.class)
 		PrivacyType value;
 		
 		@JsonProperty("friends")
+		@JsonDeserialize(using = FriendsPrivacyTypeDeserializer.class)
 		FriendsPrivacyType friends;
 		
 		@JsonProperty("networks")
@@ -149,11 +169,12 @@ abstract class PostMixin extends FacebookObjectMixin {
 		
 		@JsonProperty("deny")
 		String deny;
-	}
 
+	}
+	
 	private static class PostTypeDeserializer extends JsonDeserializer<PostType> {
 		@Override
-		public PostType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+		public PostType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			try {
 				return PostType.valueOf(jp.getText().toUpperCase());
 			} catch (IllegalArgumentException e) {
@@ -162,39 +183,63 @@ abstract class PostMixin extends FacebookObjectMixin {
 		}
 	}
 
+	private static class PrivacyTypeDeserializer extends JsonDeserializer<PrivacyType> {
+		@Override
+		public PrivacyType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+			try {
+				return PrivacyType.valueOf(jp.getText().toUpperCase());
+			} catch (IllegalArgumentException e) {
+				return PrivacyType.UNKNOWN;
+			}
+		}
+	}
+
+	private static class FriendsPrivacyTypeDeserializer extends JsonDeserializer<FriendsPrivacyType> {
+		@Override
+		public FriendsPrivacyType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+			try {
+				return FriendsPrivacyType.valueOf(jp.getText().toUpperCase());
+			} catch (IllegalArgumentException e) {
+				return FriendsPrivacyType.UNKNOWN;
+			}
+		}
+	}
+
 	private static class StatusTypeDeserializer extends JsonDeserializer<StatusType> {
 		@Override
-		public StatusType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+		public StatusType deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			return StatusType.valueOf(jp.getText().toUpperCase());
 		}
 	}
 
 	private static class CountDeserializer extends JsonDeserializer<Integer> {
 		@Override
-		public Integer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+		public Integer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			Map map = jp.readValueAs(Map.class);
 			return map.containsKey("count") ? Integer.valueOf(String.valueOf(map.get("count"))): 0; 
 		}
+		
+		@Override
+		public Integer getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+			return 0;
+		}
 	}
 
-    private static class PrivacyDeserializer extends JsonDeserializer<Privacy> {
-        @Override
-        public Privacy deserialize(JsonParser jp, DeserializationContext context)
-                throws IOException {
-            JsonNode node = jp.getCodec().readTree(jp);
-            String description = node.get("description").asText();
-            String allow = node.get("allow").asText();
-            String deny = node.get("deny").asText();
+	private class AttachmentListDeserializer extends JsonDeserializer<List<StoryAttachment>> {
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<StoryAttachment> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new FacebookModule());
+			jp.setCodec(mapper);
+			if (jp.hasCurrentToken()) {
+				JsonNode dataNode = (JsonNode) jp.readValueAs(JsonNode.class).get("data");
+				if (dataNode != null) {
+					return (List<StoryAttachment>) mapper.reader(new TypeReference<List<StoryAttachment>>() {}).readValue(dataNode);
+				}
+			}
 
-            String privacyString = node.get("value").asText().toUpperCase();
-            Post.PrivacyType value = "".equals(privacyString) ? PrivacyType.UNKNOWN
-                    : Post.PrivacyType.valueOf(privacyString);
-
-            String friendsPrivacyString = node.get("friends").asText().toUpperCase();
-            FriendsPrivacyType friends = "".equals(friendsPrivacyString) ? FriendsPrivacyType.UNKNOWN
-                    : FriendsPrivacyType.valueOf(friendsPrivacyString);
-
-            return new Privacy(description, value, friends, allow, deny);
-        }
-    }
+			return Collections.emptyList();
+		}
+	}
 }
