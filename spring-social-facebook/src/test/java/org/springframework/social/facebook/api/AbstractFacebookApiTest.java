@@ -36,14 +36,17 @@ public class AbstractFacebookApiTest {
 	protected MockRestServiceServer mockServer;
 	protected MockRestServiceServer unauthorizedMockServer;
 	protected MockRestServiceServer appFacebookMockServer;
+	protected FacebookTemplate unauthorizedFacebook;
 
 	@Before
 	public void setup() {
 		facebook = createFacebookTemplate();
 		mockServer = MockRestServiceServer.createServer(facebook.getRestTemplate());
-		
+
 		appFacebook = new FacebookTemplate(APP_ACCESS_TOKEN);
 		appFacebookMockServer = MockRestServiceServer.createServer(appFacebook.getRestTemplate());
+
+		unauthorizedFacebook = new FacebookTemplate(null);
 	}
 
 	protected FacebookTemplate createFacebookTemplate() {

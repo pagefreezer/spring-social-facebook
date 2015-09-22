@@ -1,0 +1,8 @@
+{
+"error": {
+"message": "Application request limit reached",
+"type": "FacebookApiException",
+"is_transient": true,
+"code": 4
+}
+}

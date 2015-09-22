@@ -15,37 +15,24 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import static org.springframework.social.facebook.api.FacebookErrors.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.social.*;
+import org.springframework.social.facebook.api.FacebookError;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.social.DuplicateStatusException;
-import org.springframework.social.ExpiredAuthorizationException;
-import org.springframework.social.InsufficientPermissionException;
-import org.springframework.social.InternalServerErrorException;
-import org.springframework.social.InvalidAuthorizationException;
-import org.springframework.social.MissingAuthorizationException;
-import org.springframework.social.NotAuthorizedException;
-import org.springframework.social.OperationNotPermittedException;
-import org.springframework.social.RateLimitExceededException;
-import org.springframework.social.ResourceNotFoundException;
-import org.springframework.social.RevokedAuthorizationException;
-import org.springframework.social.ServerException;
-import org.springframework.social.UncategorizedApiException;
-import org.springframework.social.facebook.api.FacebookError;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.social.facebook.api.FacebookErrors.*;
 
 /**
  * Subclass of {@link DefaultResponseErrorHandler} that handles errors from Facebook's
@@ -65,7 +52,7 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 
 	/**
 	 * Examines the error data returned from Facebook and throws the most applicable exception.
-	 * @param errorDetails a Map containing a "type" and a "message" corresponding to the Graph API's error response structure.
+	 * @param error containing a "code" and a "message" corresponding to the Graph API's error response structure.
 	 */
 	void handleFacebookError(HttpStatus statusCode, FacebookError error) {
 		if (error != null && error.getCode() != null) {
@@ -75,7 +62,8 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 				throw new UncategorizedApiException(FACEBOOK_PROVIDER_ID, error.getMessage(), null);
 			} else if (code == SERVICE) {
 				throw new ServerException(FACEBOOK_PROVIDER_ID, error.getMessage());
-			} else if (code == TOO_MANY_CALLS || code == USER_TOO_MANY_CALLS || code == EDIT_FEED_TOO_MANY_USER_CALLS || code == EDIT_FEED_TOO_MANY_USER_ACTION_CALLS) {
+			} else if (code == TOO_MANY_CALLS || code == USER_TOO_MANY_CALLS || code == EDIT_FEED_TOO_MANY_USER_CALLS
+					|| code == EDIT_FEED_TOO_MANY_USER_ACTION_CALLS || code == API_CALLS_EXCEEDED_RATE_LIMIT) {
 				throw new RateLimitExceededException(FACEBOOK_PROVIDER_ID);
 			} else if (code == PERMISSION_DENIED || isUserPermissionError(code)) {
 				throw new InsufficientPermissionException(FACEBOOK_PROVIDER_ID);
@@ -83,7 +71,7 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 				throw new InvalidAuthorizationException(FACEBOOK_PROVIDER_ID, error.getMessage());
 			} else if (code == PARAM_ACCESS_TOKEN && error.getSubcode() == null) {
 				throw new InvalidAuthorizationException(FACEBOOK_PROVIDER_ID, error.getMessage());
-			} else if (code == PARAM_ACCESS_TOKEN && error.getSubcode() == 463) {
+			} else if (code == PARAM_ACCESS_TOKEN && error.getSubcode() == SESSION_EXPIRED) {
 				throw new ExpiredAuthorizationException(FACEBOOK_PROVIDER_ID);
 			} else if (code == PARAM_ACCESS_TOKEN) {
 				throw new RevokedAuthorizationException(FACEBOOK_PROVIDER_ID, error.getMessage());
@@ -92,25 +80,15 @@ class FacebookErrorHandler extends DefaultResponseErrorHandler {
 			} else if (code == DATA_OBJECT_NOT_FOUND || code == PATH_UNKNOWN) {
 				throw new ResourceNotFoundException(FACEBOOK_PROVIDER_ID, error.getMessage());
 			} else {
-				throw new UncategorizedApiException(FACEBOOK_PROVIDER_ID, error.getMessage(), null);
+				throw new UncategorizedApiException(FACEBOOK_PROVIDER_ID, "code: " + code + ", " + error.getMessage(), null);
 			}
 		}
-	}
+// 		else {
+//			if (statusCode != null && !statusCode.is2xxSuccessful()) {
+//				logger.error(statusCode.toString());
+//			}
+//		}
 
-	private void handleInvalidAccessToken(String message) {
-		if (message.contains("Session has expired at unix time")) {
-			throw new ExpiredAuthorizationException("facebook");
-		} else if (message.contains("The session has been invalidated because the user has changed the password.")) {
-			throw new RevokedAuthorizationException("facebook", message);
-		} else if (message.contains("The session is invalid because the user logged out.")) {
-			throw new RevokedAuthorizationException("facebook", message);
-		} else if (message.contains("The session was invalidated explicitly using an API call.")) {
-			throw new RevokedAuthorizationException("facebook", message);
-		} else if (message.contains("Session does not match current stored session.")) {
-			throw new RevokedAuthorizationException("facebook", message);
-		} else {
-			throw new InvalidAuthorizationException("facebook", message);
-		}
 	}
 	
 	private FacebookError extractErrorFromResponse(ClientHttpResponse response) throws IOException {

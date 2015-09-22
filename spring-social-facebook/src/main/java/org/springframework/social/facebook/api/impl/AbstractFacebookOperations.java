@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.*;
-import org.springframework.social.MissingAuthorizationException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -29,29 +28,19 @@ class AbstractFacebookOperations {
 
 	private final static Log logger = LogFactory.getLog(AbstractFacebookOperations.class);
 
-	private final boolean isAuthorized;
-
-	public AbstractFacebookOperations(boolean isAuthorized) {
-		this.isAuthorized = isAuthorized;
-	}
-
-	public AbstractFacebookOperations(boolean isAuthorized, RestTemplate restTemplate) {
-		this(isAuthorized);
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		if (logger.isDebugEnabled()) {
-			OperationsRequestLoggingInterceptor loggingInterceptor = new OperationsRequestLoggingInterceptor(restTemplate.hashCode());
-			if (!restTemplate.getInterceptors().contains(loggingInterceptor)) {
-				restTemplate.getInterceptors().add(loggingInterceptor);
+	public AbstractFacebookOperations(RestTemplate restTemplate) {
+		if (restTemplate != null) {
+			restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+			if (logger.isDebugEnabled()) {
+				OperationsRequestLoggingInterceptor loggingInterceptor =
+						new OperationsRequestLoggingInterceptor(restTemplate.hashCode());
+				if (!restTemplate.getInterceptors().contains(loggingInterceptor)) {
+					restTemplate.getInterceptors().add(loggingInterceptor);
+				}
 			}
 		}
 	}
 	
-	protected void requireAuthorization() {
-		if (!isAuthorized) {
-			throw new MissingAuthorizationException("facebook");
-		}
-	}
-
 	private class OperationsRequestLoggingInterceptor implements ClientHttpRequestInterceptor {
 		private final int id;
 		public OperationsRequestLoggingInterceptor(int id) {

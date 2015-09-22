@@ -208,8 +208,16 @@ public class Post extends FacebookObject {
 		return hasLikes;
 	}
 
+	public void setHasLikes(boolean hasLikes) {
+		this.hasLikes = hasLikes;
+	}
+
 	public boolean hasComments() {
 		return hasComments;
+	}
+
+	public void setHasComments(boolean hasComments) {
+		this.hasComments = hasComments;
 	}
 
 	/**
@@ -218,7 +226,11 @@ public class Post extends FacebookObject {
 	public List<StoryAttachment> getAttachments() {
 		return attachments;
 	}
-	
+
+	public void setAttachments(List<StoryAttachment> attachments) {
+		this.attachments = attachments;
+	}
+
 	public static class AdminCreator {
 		
 		private String id;

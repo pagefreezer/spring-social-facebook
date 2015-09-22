@@ -328,13 +328,13 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	private void initSubApis() {
 		achievementOperations = new AchievementTemplate(this);
 		openGraphOperations = new OpenGraphTemplate(this);
-		userOperations = new UserTemplate(this, getRestTemplate(), isAuthorized());
-		friendOperations = new FriendTemplate(this, getRestTemplate(), isAuthorized());
-		feedOperations = new FeedTemplate(this, getRestTemplate(), objectMapper, isAuthorized());
+		userOperations = new UserTemplate(this, getRestTemplate());
+		friendOperations = new FriendTemplate(this, getRestTemplate());
+		feedOperations = new FeedTemplate(this, getRestTemplate(), objectMapper);
 		commentOperations = new CommentTemplate(this);
 		likeOperations = new LikeTemplate(this);
 		eventOperations = new EventTemplate(this);
-		mediaOperations = new MediaTemplate(this, getRestTemplate(), isAuthorized());
+		mediaOperations = new MediaTemplate(this, getRestTemplate());
 		groupOperations = new GroupTemplate(this);
 		pageOperations = new PageTemplate(this);
 		testUserOperations = new TestUserTemplate(getRestTemplate(), appId);

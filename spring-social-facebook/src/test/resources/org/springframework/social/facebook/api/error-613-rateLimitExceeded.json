@@ -1,0 +1,8 @@
+{
+"error": {
+"message": "Calls to this api have exceeded the rate limit",
+"type": "FacebookApiException",
+"is_transient": true,
+"code": 613
+}
+}

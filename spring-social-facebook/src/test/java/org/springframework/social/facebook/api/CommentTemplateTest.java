@@ -15,16 +15,17 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import org.junit.Test;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.springframework.http.MediaType;
-import org.springframework.social.NotAuthorizedException;
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * @author Craig Walls
@@ -120,7 +121,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("123456_543210", facebook.commentOperations().addComment("123456", "Cool beans"));
 	}
 	
-	@Test(expected = NotAuthorizedException.class)
+	@Test(expected = ResourceAccessException.class)
 	public void addComment_unauthorized() {
 		unauthorizedFacebook.commentOperations().addComment("123456", "Cool beans");
 	}
@@ -136,7 +137,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 		mockServer.verify();
 	}
 
-	@Test(expected = NotAuthorizedException.class)
+	@Test(expected = ResourceAccessException.class)
 	public void deleteComment_unauthorized() {
 		unauthorizedFacebook.commentOperations().deleteComment("1533260333_122829644452184_587062");
 	}

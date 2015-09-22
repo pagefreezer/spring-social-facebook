@@ -194,6 +194,11 @@ public class FacebookErrors {
 	public static final int POKE_OUTSTANDING = 511;
 	public static final int POKE_RATE = 512;
 	public static final int POKE_USER_BLOCKED = 513;
+
+
+	//API level
+	public static final int API_CALLS_EXCEEDED_RATE_LIMIT = 613;
+
 	
 	// Ref errors
 	public static final int REF_SET_FAILED = 700;

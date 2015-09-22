@@ -21,11 +21,12 @@ import org.springframework.util.MultiValueMap;
 
 import static org.springframework.social.facebook.api.impl.PagedListUtils.getPagingParameters;
 
-class CommentTemplate implements CommentOperations {
+class CommentTemplate extends AbstractFacebookOperations implements CommentOperations {
 
 	private final GraphApi graphApi;
 
 	public CommentTemplate(GraphApi graphApi) {
+		super(null);
 		this.graphApi = graphApi;
 	}
 

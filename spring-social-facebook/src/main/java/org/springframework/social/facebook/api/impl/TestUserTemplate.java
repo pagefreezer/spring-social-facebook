@@ -30,7 +30,7 @@ public class TestUserTemplate extends AbstractFacebookOperations implements Test
 	private RestTemplate restTemplate;
 
 	public TestUserTemplate(RestTemplate restTemplate, String appId) {
-		super(false);
+		super(restTemplate);
 		this.restTemplate = restTemplate;
 		this.appId = appId;
 	}
