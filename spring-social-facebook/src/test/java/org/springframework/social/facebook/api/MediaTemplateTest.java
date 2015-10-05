@@ -15,24 +15,29 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.social.facebook.api.Photo.TimeGranularity;
 
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums() {
-		mockServer.expect(requestTo(fbUrl("me/albums?offset=0&limit=25")))
+		mockServer.expect(requestTo(fbUrl("me/albums?limit=25&offset=0&fields=id%2Ccan_upload%2Ccount%2Ccover_photo" +
+				"%7Bid%2Calbum%2Cbackdated_time%2Cbackdated_time_granularity%2Ccreated_time%2Cfrom%2Cheight%2Cicon" +
+				"%2Cimages%2Clink%2Cname%2Cpage_story_id%2Cplace%2Cpicture%2Csource%2Ctags%2Cupdated_time%2Cwidth%7D" +
+				"%2Ccreated_time%2Cfrom%2Clink%2Cname%2Cprivacy%2Ctype%2Cupdated_time%2Clikes%2Ccomments%2Cbackdated_time")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
@@ -42,7 +47,10 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums_forSpecificUser() {
-		mockServer.expect(requestTo(fbUrl("192837465/albums?offset=0&limit=25")))
+		mockServer.expect(requestTo(fbUrl("192837465/albums?limit=25&offset=0&fields=id%2Ccan_upload%2Ccount%2Ccover_photo" +
+				"%7Bid%2Calbum%2Cbackdated_time%2Cbackdated_time_granularity%2Ccreated_time%2Cfrom%2Cheight%2Cicon" +
+				"%2Cimages%2Clink%2Cname%2Cpage_story_id%2Cplace%2Cpicture%2Csource%2Ctags%2Cupdated_time%2Cwidth%7D" +
+				"%2Ccreated_time%2Cfrom%2Clink%2Cname%2Cprivacy%2Ctype%2Cupdated_time%2Clikes%2Ccomments%2Cbackdated_time")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
@@ -82,7 +90,9 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getPhotos() {
-		mockServer.expect(requestTo(fbUrl("10151447271460580/photos?offset=0&limit=25")))
+		mockServer.expect(requestTo(fbUrl("10151447271460580/photos?offset=0&limit=25&fields=id%2Calbum" +
+				"%2Cbackdated_time%2Cbackdated_time_granularity%2Ccreated_time%2Cfrom%2Cheight%2Cicon%2Cimages" +
+				"%2Clink%2Cname%2Cpage_story_id%2Cplace%2Cpicture%2Csource%2Ctags%2Cupdated_time%2Cwidth")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("photos"), MediaType.APPLICATION_JSON));

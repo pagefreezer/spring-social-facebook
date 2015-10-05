@@ -15,14 +15,6 @@
  */
 package org.springframework.social.facebook.api.impl.json;
 
-import java.io.IOException;
-import java.util.Date;
-
-import org.springframework.social.facebook.api.Album.Privacy;
-import org.springframework.social.facebook.api.Album.Type;
-import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.api.Reference;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -30,6 +22,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.social.facebook.api.Album.Privacy;
+import org.springframework.social.facebook.api.Album.Type;
+import org.springframework.social.facebook.api.Page;
+import org.springframework.social.facebook.api.Reference;
+
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * Annotated mixin to add Jackson annotations to Album. 
@@ -80,6 +79,9 @@ abstract class AlbumMixin extends FacebookObjectMixin {
 	
 	@JsonProperty("updated_time")
 	Date updatedTime;
+
+	@JsonProperty("backdated_time")
+	Date backdatedTime;
 	
 	private static class TypeDeserializer extends JsonDeserializer<Type> {
 		@Override
