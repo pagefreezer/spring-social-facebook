@@ -34,9 +34,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums() {
-		mockServer.expect(requestTo(fbUrl("me/albums?limit=25&offset=0&fields=id%2Ccan_upload%2Ccount%2Ccover_photo" +
-				"%7Bid%2Calbum%2Cbackdated_time%2Cbackdated_time_granularity%2Ccreated_time%2Cfrom%2Cheight%2Cicon" +
-				"%2Cimages%2Clink%2Cname%2Cpage_story_id%2Cplace%2Cpicture%2Csource%2Ctags%2Cupdated_time%2Cwidth%7D" +
+		mockServer.expect(requestTo(fbUrl("me/albums?limit=25&offset=0&fields=id%2Ccan_upload%2Ccount" +
 				"%2Ccreated_time%2Cfrom%2Clink%2Cname%2Cprivacy%2Ctype%2Cupdated_time%2Clikes%2Ccomments%2Cbackdated_time")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -47,9 +45,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums_forSpecificUser() {
-		mockServer.expect(requestTo(fbUrl("192837465/albums?limit=25&offset=0&fields=id%2Ccan_upload%2Ccount%2Ccover_photo" +
-				"%7Bid%2Calbum%2Cbackdated_time%2Cbackdated_time_granularity%2Ccreated_time%2Cfrom%2Cheight%2Cicon" +
-				"%2Cimages%2Clink%2Cname%2Cpage_story_id%2Cplace%2Cpicture%2Csource%2Ctags%2Cupdated_time%2Cwidth%7D" +
+		mockServer.expect(requestTo(fbUrl("192837465/albums?limit=25&offset=0&fields=id%2Ccan_upload%2Ccount" +
 				"%2Ccreated_time%2Cfrom%2Clink%2Cname%2Cprivacy%2Ctype%2Cupdated_time%2Clikes%2Ccomments%2Cbackdated_time")))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -334,7 +330,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 		assertEquals("Craig Walls", album.getFrom().getName());
 		assertEquals("http://www.facebook.com/album.php?aid=620722&id=738140579", album.getLink());
 		assertEquals("Early Broncos", album.getName());
-		assertEquals("10151447371355580", album.getCoverPhoto());
+//		assertEquals("10151447371355580", album.getCoverPhoto());
 		assertNull(album.getDescription());
 		assertEquals("Somewhere", album.getLocation());
 		assertEquals(Album.Privacy.CUSTOM, album.getPrivacy());

@@ -30,7 +30,7 @@ public class Album extends FacebookObject {
 
 	private int count;
 
-	private String coverPhoto;
+	//private String coverPhoto;
 
 	private Date createdTime;
 
@@ -66,13 +66,13 @@ public class Album extends FacebookObject {
 		return count;
 	}
 
-	/**
-	 * The ID of the Photo object that is the cover photo for the album.
-	 * @return A Photo object ID or null if the album does not have a cover photo
-	 */
-	public String getCoverPhoto() {
-		return coverPhoto;
-	}
+//	/**
+//	 * The ID of the Photo object that is the cover photo for the album.
+//	 * @return A Photo object ID or null if the album does not have a cover photo
+//	 */
+//	public String getCoverPhoto() {
+//		return coverPhoto;
+//	}
 
 	public Date getCreatedTime() {
 		return createdTime;

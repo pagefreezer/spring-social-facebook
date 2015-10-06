@@ -46,8 +46,8 @@ abstract class AlbumMixin extends FacebookObjectMixin {
 	@JsonProperty("count")
 	int count;
 	
-	@JsonProperty("cover_photo")
-	String coverPhoto;
+//	@JsonProperty("cover_photo")
+//	String coverPhoto;
 		
 	@JsonProperty("created_time") 
 	Date createdTime;
