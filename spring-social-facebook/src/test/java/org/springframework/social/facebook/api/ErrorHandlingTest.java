@@ -15,24 +15,12 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.social.DuplicateStatusException;
-import org.springframework.social.ExpiredAuthorizationException;
-import org.springframework.social.InsufficientPermissionException;
-import org.springframework.social.InvalidAuthorizationException;
-import org.springframework.social.MissingAuthorizationException;
-import org.springframework.social.RateLimitExceededException;
-import org.springframework.social.ResourceNotFoundException;
-import org.springframework.social.RevokedAuthorizationException;
+import org.springframework.social.*;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.test.web.client.MockRestServiceServer;
 
@@ -241,7 +229,10 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void notFound() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/nobody/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/nobody/feed?limit=25&fields=id" +
+				"%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink" +
+				"%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type" +
+				"%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withStatus(HttpStatus.NOT_FOUND).body(jsonResource("error-404-unknown-alias")).contentType(MediaType.APPLICATION_JSON));

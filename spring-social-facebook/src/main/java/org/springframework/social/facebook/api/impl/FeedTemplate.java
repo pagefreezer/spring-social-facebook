@@ -40,7 +40,7 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	private static final String[] ALL_FIELDS = {
 			"id", "likes.limit(1)", "comments.limit(1)", "from", "story", "story_tags", "picture", "link", "source",
 			"name", "caption", "description", "icon", "actions", "privacy", "type",
-			"status_type", "created_time", "updated_time", "is_hidden", "subscribed", "is_expired" };
+			"status_type", "created_time", "updated_time", "is_hidden", "subscribed", "is_expired", "message" };
 
 	private final GraphApi graphApi;
 	
@@ -69,7 +69,8 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 		
 	public PagedList<Post> getFeed(String ownerId, PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/feed", pagedListParameters, getPagingParameters(pagedListParameters), ALL_FIELDS);
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/feed", pagedListParameters,
+				getPagingParameters(pagedListParameters), ALL_FIELDS);
 		return deserializeList(responseNode, null, Post.class);
 	}
 
@@ -133,7 +134,8 @@ class FeedTemplate extends AbstractFacebookOperations implements FeedOperations 
 	
 	public PagedList<Post> getPosts(String ownerId, PagingParameters pagedListParameters) {
 		requireAuthorization();
-		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/posts", pagedListParameters, getPagingParameters(pagedListParameters));
+		JsonNode responseNode = fetchConnectionList(GraphApi.GRAPH_API_URL + ownerId + "/posts", pagedListParameters,
+				getPagingParameters(pagedListParameters));
 		return deserializeList(responseNode, null, Post.class);
 	}
 	

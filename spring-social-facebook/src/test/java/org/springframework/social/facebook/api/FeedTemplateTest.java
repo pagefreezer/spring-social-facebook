@@ -37,7 +37,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&fields=id%2Clikes.limit%281%29" +
+				"%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption" +
+				"%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time" +
+				"%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -48,7 +51,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_withPagedListParameters_since() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&since=1360384019&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&since=1360384019&fields=id" +
+				"%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink" +
+				"%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type" +
+				"%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -59,7 +65,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_withPagedListParameters_until() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&until=1360384019&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&until=1360384019&fields=id" +
+				"%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink" +
+				"%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type" +
+				"%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
@@ -70,7 +79,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_withUnknownType() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed?limit=25&fields=id%2Clikes.limit" +
+				"%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource" +
+				"%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type" +
+				"%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed-with-unknown-type"), MediaType.APPLICATION_JSON));
@@ -92,7 +104,10 @@ public class FeedTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getFeed_forOwnerId() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/12345678/feed?limit=25&fields=id%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/12345678/feed?limit=25&fields=id" +
+				"%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture" +
+				"%2Clink%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype" +
+				"%2Cstatus_type%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("feed"), MediaType.APPLICATION_JSON));
