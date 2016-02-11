@@ -15,27 +15,23 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.springframework.social.facebook.api.FacebookProfile;
-import org.springframework.social.facebook.api.GraphApi;
-import org.springframework.social.facebook.api.ImageType;
-import org.springframework.social.facebook.api.PagedList;
-import org.springframework.social.facebook.api.Reference;
-import org.springframework.social.facebook.api.UserOperations;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.social.facebook.api.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 class UserTemplate extends AbstractFacebookOperations implements UserOperations {
 
 	private final GraphApi graphApi;
-	
+
 	private final RestTemplate restTemplate;
+
+	private static final String COVER_FIELDS = "?fields=cover";
 
 	public UserTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
 		super(isAuthorizedForUser, restTemplate);
@@ -51,12 +47,12 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 	public FacebookProfile getUserProfile(String facebookId) {
 		return graphApi.fetchObject(facebookId, FacebookProfile.class);
 	}
-	
+
 	public byte[] getUserProfileImage() {
 		requireAuthorization();
 		return getUserProfileImage("me", ImageType.NORMAL);
 	}
-	
+
 	public byte[] getUserProfileImage(String userId) {
 		return getUserProfileImage(userId, ImageType.NORMAL);
 	}
@@ -65,7 +61,7 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 		requireAuthorization();
 		return getUserProfileImage("me", imageType);
 	}
-	
+
 	public byte[] getUserProfileImage(String userId, ImageType imageType) {
 		return graphApi.fetchImage(userId, "picture", imageType);
 	}
@@ -84,6 +80,15 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 		return deserializePermissionsNodeToList(responseNode);
 	}
 
+	public CoverPhoto getCoverPhoto() {
+		requireAuthorization();
+		return getCoverPhoto("me");
+	}
+
+	public CoverPhoto getCoverPhoto(String facebookId) {
+		return restTemplate.getForObject(GraphApi.GRAPH_API_URL + facebookId + COVER_FIELDS, CoverPhoto.class);
+	}
+
 	public PagedList<Reference> search(String query) {
 		requireAuthorization();
 		MultiValueMap<String, String> queryMap = new LinkedMultiValueMap<String, String>();
@@ -93,7 +98,7 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 	}
 
 	private List<String> deserializePermissionsNodeToList(JsonNode jsonNode) {
-		JsonNode dataNode = jsonNode.get("data");			
+		JsonNode dataNode = jsonNode.get("data");
 		List<String> permissions = new ArrayList<String>();
 		for (Iterator<JsonNode> elementIt = dataNode.elements(); elementIt.hasNext(); ) {
 			JsonNode permissionsElement = elementIt.next();
@@ -105,4 +110,5 @@ class UserTemplate extends AbstractFacebookOperations implements UserOperations 
 		}
 		return permissions;
 	}
+
 }

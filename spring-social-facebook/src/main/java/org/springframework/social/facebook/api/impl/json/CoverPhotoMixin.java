@@ -17,20 +17,47 @@ package org.springframework.social.facebook.api.impl.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.social.facebook.api.CoverPhoto;
+
+import java.io.IOException;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonDeserialize(using = CoverPhotoMixin.CoverPhotoDeserializer.class)
 abstract class CoverPhotoMixin extends FacebookObjectMixin {
 
-		@JsonProperty("cover_id")
-		String id;
-		
-		@JsonProperty("source")
-		String source;
-		
-		@JsonProperty("offset_x")
-		int offsetX;
-		
-		@JsonProperty("offset_y")
-		int offsetY;
-	
+	@JsonProperty("cover_id")
+	String id;
+
+	@JsonProperty("source")
+	String source;
+
+	@JsonProperty("offset_x")
+	int offsetX;
+
+	@JsonProperty("offset_y")
+	int offsetY;
+
+	static class CoverPhotoDeserializer extends JsonDeserializer<CoverPhoto> {
+
+		@Override
+		public CoverPhoto deserialize(JsonParser jp, DeserializationContext context) throws IOException {
+			JsonNode node = jp.getCodec().readTree(jp);
+			if (node.has("cover")) {
+				node = node.get("cover");
+			}
+
+			String id = node.has("id") ? node.get("id").asText() : node.get("cover_id").asText();
+			String source = node.get("source").asText();
+			int x = node.has("offset_x") ? node.get("offset_x").asInt() : 0;
+			int y = node.has("offset_y") ? node.get("offset_y").asInt() : 0;
+			return new CoverPhoto(id, source, x, y);
+		}
+
+	}
+
 }

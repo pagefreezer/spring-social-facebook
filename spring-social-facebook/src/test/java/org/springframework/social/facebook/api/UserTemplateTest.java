@@ -15,24 +15,24 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import java.util.List;
-import java.util.Locale;
-
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.social.NotAuthorizedException;
 
+import java.util.List;
+import java.util.Locale;
+
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 /**
  * @author Craig Walls
  */
 public class UserTemplateTest extends AbstractFacebookApiTest {
-	
+
 	@Test
 	public void getUserProfile_currentUser() {
 		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
@@ -91,7 +91,7 @@ public class UserTemplateTest extends AbstractFacebookApiTest {
 		assertWorkHistory(profile.getWork());
 		assertEducationHistory(profile.getEducation());
 	}
-	
+
 	@Test(expected = NotAuthorizedException.class)
 	public void getUserProfile_currentUser_unauthorized() {
 		unauthorizedFacebook.userOperations().getUserProfile();
@@ -118,7 +118,7 @@ public class UserTemplateTest extends AbstractFacebookApiTest {
 		FacebookProfile profile = facebook.userOperations().getUserProfile("123456789");
 		assertBasicProfileData(profile, false);
 	}
-	
+
 	@Test
 	public void getUserProfile_specificUserByUserId_withRealTimezone() {
 		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456789"))
@@ -128,16 +128,16 @@ public class UserTemplateTest extends AbstractFacebookApiTest {
 
 		FacebookProfile profile = facebook.userOperations().getUserProfile("123456789");
 		assertBasicProfileData(profile, true);
-		assertEquals(Float.valueOf("-4.5"), profile.getTimezone()); 
+		assertEquals(Float.valueOf("-4.5"), profile.getTimezone());
 	}
-	
+
 	@Test
 	public void getUserProfile_withAgeRange_13_17() {
 		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456789"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("minimal-profile-with-age-range-13-17"), MediaType.APPLICATION_JSON));
-		
+
 		FacebookProfile profile = facebook.userOperations().getUserProfile("123456789");
 		assertEquals(AgeRange.AGE_13_17, profile.getAgeRange());
 		assertEquals(13, profile.getAgeRange().getMin().intValue());
@@ -150,7 +150,7 @@ public class UserTemplateTest extends AbstractFacebookApiTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("minimal-profile-with-age-range-18-20"), MediaType.APPLICATION_JSON));
-		
+
 		FacebookProfile profile = facebook.userOperations().getUserProfile("123456789");
 		assertEquals(AgeRange.AGE_18_20, profile.getAgeRange());
 		assertEquals(18, profile.getAgeRange().getMin().intValue());
@@ -163,7 +163,7 @@ public class UserTemplateTest extends AbstractFacebookApiTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("minimal-profile-with-age-range-21-plus"), MediaType.APPLICATION_JSON));
-		
+
 		FacebookProfile profile = facebook.userOperations().getUserProfile("123456789");
 		assertEquals(AgeRange.AGE_21_PLUS, profile.getAgeRange());
 		assertEquals(21, profile.getAgeRange().getMin().intValue());
@@ -176,7 +176,7 @@ public class UserTemplateTest extends AbstractFacebookApiTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("minimal-profile-with-age-range-unknown"), MediaType.APPLICATION_JSON));
-		
+
 		FacebookProfile profile = facebook.userOperations().getUserProfile("123456789");
 		assertEquals(AgeRange.UNKNOWN, profile.getAgeRange());
 		assertEquals(33, profile.getAgeRange().getMin().intValue());

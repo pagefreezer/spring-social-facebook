@@ -15,10 +15,10 @@
  */
 package org.springframework.social.facebook.api;
 
-import java.util.List;
-
 import org.springframework.social.ApiException;
 import org.springframework.social.MissingAuthorizationException;
+
+import java.util.List;
 
 
 
@@ -96,7 +96,23 @@ public interface UserOperations {
 	 * @throws MissingAuthorizationException if FacebookTemplate was not created with an access token.
 	 */
 	List<String> getUserPermissions();
-	
+
+	/**
+	 * Retrieves the user's or page's cover photo.
+	 * @return the cover photo containing the image source.
+	 * @throws ApiException if there is an error while communicating with Facebook.
+	 */
+	CoverPhoto getCoverPhoto();
+
+	/**
+	 * Retrieves the user's or page's cover photo.
+	 * @param facebookId the Facebook user ID.
+	 * @return the cover photo containing the image source.
+	 * @throws ApiException if there is an error while communicating with Facebook.
+	 */
+	CoverPhoto getCoverPhoto(String facebookId);
+
+
 	/**
 	 * Searches for users.
 	 * @param query the search query (e.g., "Michael Scott")

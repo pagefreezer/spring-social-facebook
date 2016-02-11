@@ -28,7 +28,14 @@ public class CoverPhoto extends FacebookObject {
 	private int offsetY;
 
 	private String source;
-	
+
+	public CoverPhoto(String id, String source, int offsetX, int offsetY) {
+		this.id = id;
+		this.source = source;
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
+	}
+
 	/**
 	 * @return The ID of the cover photo's Photo object.
 	 */
