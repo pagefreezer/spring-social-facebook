@@ -52,7 +52,7 @@ abstract class CoverPhotoMixin extends FacebookObjectMixin {
 			}
 
 			String id = node.has("id") ? node.get("id").asText() : node.get("cover_id").asText();
-			String source = node.get("source").asText();
+			String source = node.has("source") ? node.get("source").asText() : null;
 			int x = node.has("offset_x") ? node.get("offset_x").asInt() : 0;
 			int y = node.has("offset_y") ? node.get("offset_y").asInt() : 0;
 			return new CoverPhoto(id, source, x, y);
