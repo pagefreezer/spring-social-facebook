@@ -30,11 +30,11 @@ configure(allprojects - docProjects) {
 
     [compileJava, compileTestJava]*.options*.compilerArgs = ['-Xlint:none']
 
-    sourceSets.test.resources.srcDirs = ['src/test/resources', 'src/test/java']
+    //sourceSets.test.resources.srcDirs = ['src/test/resources', 'src/test/java']
 
-    tasks.withType(Test).all {
-        systemProperty("java.awt.headless", "true")
-    }
+//    tasks.withType(Test).all {
+//        systemProperty("java.awt.headless", "true")
+//    }
 
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
@@ -151,23 +151,23 @@ configure(subprojects - docProjects) { subproject ->
         }
     }
 
-    task springReleaseTest(type: Test) {
-        classpath = sourceSets.test.output + sourceSets.main.output + configurations.springReleaseTestRuntime
-        getReports().getJunitXml().setDestination(file("$buildDir/spring-release-test-results/"))
-        getReports().getHtml().setDestination(file("$buildDir/reports/spring-release-tests/"))
-    }
-    check.dependsOn springReleaseTest
+//    task springReleaseTest(type: Test) {
+//        classpath = sourceSets.test.output + sourceSets.main.output + configurations.springReleaseTestRuntime
+//        getReports().getJunitXml().setDestination(file("$buildDir/spring-release-test-results/"))
+//        getReports().getHtml().setDestination(file("$buildDir/reports/spring-release-tests/"))
+//    }
+//    check.dependsOn springReleaseTest
 
-    task springSnapshotTest(type: Test) {
-        classpath = sourceSets.test.output + sourceSets.main.output + configurations.springSnapshotTestRuntime
-        getReports().getJunitXml().setDestination(file("$buildDir/spring-snapshot-test-results/"))
-        getReports().getHtml().setDestination(file("$buildDir/reports/spring-snapshot-tests/"))
-    }
-    check.dependsOn springSnapshotTest
+//    task springSnapshotTest(type: Test) {
+//        classpath = sourceSets.test.output + sourceSets.main.output + configurations.springSnapshotTestRuntime
+//        getReports().getJunitXml().setDestination(file("$buildDir/spring-snapshot-test-results/"))
+//        getReports().getHtml().setDestination(file("$buildDir/reports/spring-snapshot-tests/"))
+//    }
+//    check.dependsOn springSnapshotTest
 
-    configure([test, springReleaseTest, springSnapshotTest]) {
-        systemProperties['springVersion'] = springVersion
-    }
+//    configure([test, springReleaseTest, springSnapshotTest]) {
+//        systemProperties['springVersion'] = springVersion
+//    }
 }
 
 

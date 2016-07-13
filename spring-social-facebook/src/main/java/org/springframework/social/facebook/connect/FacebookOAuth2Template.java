@@ -15,8 +15,6 @@
  */
 package org.springframework.social.facebook.connect;
 
-import java.util.Collections;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -25,6 +23,8 @@ import org.springframework.social.oauth2.OAuth2Template;
 import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
 
 /**
  * Facebook-specific extension of OAuth2Template to use a RestTemplate that recognizes form-encoded responses as "text/plain".
@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 public class FacebookOAuth2Template extends OAuth2Template {
 
 	public FacebookOAuth2Template(String clientId, String clientSecret) {
-		super(clientId, clientSecret, "https://www.facebook.com/v2.0/dialog/oauth", "https://graph.facebook.com/v2.0/oauth/access_token");
+		super(clientId, clientSecret, "https://www.facebook.com/v2.1/dialog/oauth", "https://graph.facebook.com/v2.1/oauth/access_token");
 		setUseParametersForClientAuthentication(true);
 	}
 
