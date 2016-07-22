@@ -15,13 +15,6 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -29,11 +22,19 @@ import org.springframework.http.MediaType;
 import org.springframework.social.MissingAuthorizationException;
 import org.springframework.social.NotAuthorizedException;
 
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/albums?offset=0&limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/albums?offset=0&limit=25"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
@@ -48,7 +49,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums_forSpecificUser() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/albums?offset=0&limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/albums?offset=0&limit=25"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
@@ -59,7 +60,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void getAlbums_forSpecificUser_unauthorized() {
 		try {
-			unauthorizedMockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/albums?offset=0&limit=25"))
+			unauthorizedMockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/albums?offset=0&limit=25"))
 				.andExpect(method(GET))
 				.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
 			unauthorizedFacebook.mediaOperations().getAlbums("192837465");
@@ -70,7 +71,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbum() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/10151447271460580"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/10151447271460580"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("album"), MediaType.APPLICATION_JSON));
@@ -80,7 +81,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbumWithUnknownPrivacy() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/10151447271460580"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/10151447271460580"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("album-with-unknown-privacy"), MediaType.APPLICATION_JSON));
@@ -90,7 +91,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbumWithUnknownType() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/10151447271460580"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/10151447271460580"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("album-with-unknown-type"), MediaType.APPLICATION_JSON));
@@ -100,7 +101,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getPhotos() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/10151447271460580/photos?offset=0&limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/10151447271460580/photos?offset=0&limit=25"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("photos"), MediaType.APPLICATION_JSON));
@@ -112,7 +113,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void getPhotos_unauthorized() {
 		try {
-			unauthorizedMockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/photos?offset=0&limit=25"))
+			unauthorizedMockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/photos?offset=0&limit=25"))
 				.andExpect(method(GET))
 				.andRespond(withSuccess(jsonResource("photos"), MediaType.APPLICATION_JSON));
 			unauthorizedFacebook.mediaOperations().getPhotos("192837465");
@@ -123,7 +124,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getPhoto() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/10150447271355581"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/10150447271355581"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("photo"), MediaType.APPLICATION_JSON));
@@ -133,7 +134,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void getPhoto_unauthorized() {
 		try {
-			unauthorizedMockServer.expect(requestTo("https://graph.facebook.com/v2.0/10150447271355581"))
+			unauthorizedMockServer.expect(requestTo("https://graph.facebook.com/v2.3/10150447271355581"))
 				.andExpect(method(GET))
 				.andRespond(withSuccess(jsonResource("photo"), MediaType.APPLICATION_JSON));
 			unauthorizedFacebook.mediaOperations().getPhoto("10150447271355581");
@@ -145,7 +146,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void postPhoto_noCaption() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/photos"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/photos"))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -162,7 +163,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void postPhoto_withCaption() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/photos"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/photos"))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -179,7 +180,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void postPhoto_ToAlbumNoCaption() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/photos"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/photos"))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -196,7 +197,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void postPhoto_ToAlbumWithCaption() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/192837465/photos"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/photos"))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -213,7 +214,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getVideos() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/videos?offset=0&limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/videos?offset=0&limit=25"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("videos"), MediaType.APPLICATION_JSON));
@@ -228,7 +229,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getVideos_forSpecificOwner() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/100001387295207/videos?offset=0&limit=25"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/100001387295207/videos?offset=0&limit=25"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("videos"), MediaType.APPLICATION_JSON));
@@ -243,7 +244,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getVideo_preOctober2012() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/161500020572907"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/161500020572907"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("video_preOct2012"), MediaType.APPLICATION_JSON));
@@ -253,7 +254,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getVideo() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/161500020572907"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/161500020572907"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("video"), MediaType.APPLICATION_JSON));
