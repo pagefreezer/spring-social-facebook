@@ -58,7 +58,6 @@ class AbstractFacebookOperations {
 			this.id = id;
 		}
 
-		@Override
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 			ClientHttpResponse response = execution.execute(request, body);
 

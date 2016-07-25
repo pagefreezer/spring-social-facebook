@@ -35,11 +35,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Craig Walls
  */
 public class PageTemplateTest extends AbstractFacebookApiTest {
-	
+
 	@Test
 	@SuppressWarnings("deprecation")
 	public void getPage_organization() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/140804655931206"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/140804655931206"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("organization-page"), MediaType.APPLICATION_JSON));
@@ -63,7 +63,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void getPage_product() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/21278871488"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/21278871488"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("product-page"), MediaType.APPLICATION_JSON));
@@ -92,7 +92,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void getPage_place() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/150263434985489"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/150263434985489"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("place-page"), MediaType.APPLICATION_JSON));
@@ -133,7 +133,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void getPage_place_with_hours() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/220817147947513"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/220817147947513"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("place-with-hours-page"), MediaType.APPLICATION_JSON));
@@ -176,7 +176,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getPage_application() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/140372495981006"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/140372495981006"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("application-page"), MediaType.APPLICATION_JSON));
@@ -193,7 +193,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void getPage_withExtraData() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/11803178355"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/11803178355"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("page-with-extra-data"), MediaType.APPLICATION_JSON));
@@ -255,7 +255,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	public void post_message() throws Exception {
 		expectFetchAccounts();
 		String requestBody = "message=Hello+Facebook+World&access_token=pageAccessToken";
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/987654321/feed"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/987654321/feed"))
 				.andExpect(method(POST))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andExpect(content().string(requestBody))
@@ -279,7 +279,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	public void postLink() throws Exception {
 		expectFetchAccounts();
 		String requestBody = "link=someLink&name=some+name&caption=some+caption&description=some+description&message=Hello+Facebook+World&access_token=pageAccessToken";
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/987654321/feed")).andExpect(method(POST))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/987654321/feed")).andExpect(method(POST))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andExpect(content().string(requestBody))
 				.andRespond(withSuccess("{\"id\":\"123456_78901234\"}", MediaType.APPLICATION_JSON));
@@ -304,7 +304,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void postPhoto_noCaption() {
 		expectFetchAccounts();
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/photos"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/photos"))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -322,7 +322,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void postPhoto_withCaption() {
 		expectFetchAccounts();
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/192837465/photos"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/photos"))
 			.andExpect(method(POST))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("{\"id\":\"12345\"}", MediaType.APPLICATION_JSON));
@@ -339,7 +339,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void search() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/search?q=coffee&type=place&center=33.050278%2C-96.745833&distance=5280"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/search?q=coffee&type=place&center=33.050278%2C-96.745833&distance=5280"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("places-list"), MediaType.APPLICATION_JSON));
@@ -375,7 +375,7 @@ public class PageTemplateTest extends AbstractFacebookApiTest {
 	// private helpers
 	
 	private void expectFetchAccounts() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/accounts"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/me/accounts"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withSuccess(jsonResource("accounts"), MediaType.APPLICATION_JSON));

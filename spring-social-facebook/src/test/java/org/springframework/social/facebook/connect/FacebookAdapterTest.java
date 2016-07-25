@@ -28,6 +28,8 @@ import static org.junit.Assert.assertNull;
 
 public class FacebookAdapterTest {
 
+	private static final String GRAPH_API_FACEBOOK = "http://graph.facebook.com/v2.1";
+
 	private FacebookAdapter apiAdapter = new FacebookAdapter();
 	
 	private Facebook facebook = Mockito.mock(Facebook.class);
@@ -44,8 +46,6 @@ public class FacebookAdapterTest {
 		assertNull(profile.getEmail());
 		assertNull(profile.getUsername());
 	}
-	//TODO, merge 2.0.0.M1 into PF, make sure it uses 2.3 api,
-	//test social crawlers.
 
 	@Test
 	public void setConnectionValues() {		
@@ -55,8 +55,8 @@ public class FacebookAdapterTest {
 		TestConnectionValues connectionValues = new TestConnectionValues();
 		apiAdapter.setConnectionValues(facebook, connectionValues);
 		assertEquals("Craig Walls", connectionValues.getDisplayName());
-		assertEquals("https://graph.facebook.com/v2.3/12345678/picture", connectionValues.getImageUrl());
-		assertEquals("https://www.facebook.com/app_scoped_user_id/12345678/", connectionValues.getProfileUrl());
+		assertEquals(GRAPH_API_FACEBOOK + "/12345678/picture", connectionValues.getImageUrl());
+		assertEquals("http://facebook.com/profile.php?id=12345678", connectionValues.getProfileUrl());
 		assertEquals("12345678", connectionValues.getProviderUserId());
 	}
 

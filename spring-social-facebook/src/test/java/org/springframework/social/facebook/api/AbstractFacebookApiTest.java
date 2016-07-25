@@ -15,19 +15,22 @@
  */
 package org.springframework.social.facebook.api;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.junit.Before;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.test.web.client.MockRestServiceServer;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class AbstractFacebookApiTest {
+
+	protected static final String GRAPH_API_FACEBOOK = "https://graph.facebook.com/v2.1";
+
 	protected static final String ACCESS_TOKEN = "someAccessToken";
 	protected static final String APP_ACCESS_TOKEN = "123456|abcdefg987654321";
 

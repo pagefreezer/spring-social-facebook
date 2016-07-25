@@ -90,8 +90,6 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	
 	private PageOperations pageOperations;
 	
-	private FqlOperations fqlOperations;
-	
 	private OpenGraphOperations openGraphOperations;
 
 	private ObjectMapper objectMapper;
@@ -173,10 +171,6 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 	
 	public RestOperations restOperations() {
 		return getRestTemplate();
-	}
-	
-	public FqlOperations fqlOperations() {
-		return fqlOperations;
 	}
 	
 	public OpenGraphOperations openGraphOperations() {
@@ -336,7 +330,6 @@ public class FacebookTemplate extends AbstractOAuth2ApiBinding implements Facebo
 		mediaOperations = new MediaTemplate(this, getRestTemplate(), isAuthorized());
 		groupOperations = new GroupTemplate(this, isAuthorized());
 		pageOperations = new PageTemplate(this, isAuthorized());
-		fqlOperations = new FqlTemplate(this, isAuthorized());
 	}
 	
 	@SuppressWarnings("unchecked")
