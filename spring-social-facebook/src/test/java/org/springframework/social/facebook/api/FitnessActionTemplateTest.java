@@ -15,19 +15,19 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 public class FitnessActionTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void runs() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/fitness.runs"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/fitness.runs"))
 			.andExpect(method(POST))
 			.andExpect(content().string("course=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -39,7 +39,7 @@ public class FitnessActionTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void walks() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/fitness.walks"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/fitness.walks"))
 			.andExpect(method(POST))
 			.andExpect(content().string("course=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -51,7 +51,7 @@ public class FitnessActionTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void bikes() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/fitness.bikes"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/fitness.bikes"))
 			.andExpect(method(POST))
 			.andExpect(content().string("course=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))

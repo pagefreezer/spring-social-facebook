@@ -15,19 +15,19 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 public class GeneralActionTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void like() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/og.likes"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/og.likes"))
 			.andExpect(method(POST))
 			.andExpect(content().string("object=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -39,7 +39,7 @@ public class GeneralActionTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void like_withPrivacy() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/og.likes"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/og.likes"))
 			.andExpect(method(POST))
 			.andExpect(content().string("privacy=%7B%22value%22%3A%22SELF%22%7D&object=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -51,7 +51,7 @@ public class GeneralActionTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void follow() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/og.follows"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/og.follows"))
 			.andExpect(method(POST))
 			.andExpect(content().string("profile=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))

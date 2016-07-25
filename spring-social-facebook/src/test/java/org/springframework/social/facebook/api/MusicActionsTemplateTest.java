@@ -15,19 +15,19 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 public class MusicActionsTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void listenToSong() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/music.listens"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/music.listens"))
 			.andExpect(method(POST))
 			.andExpect(content().string("song=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -39,7 +39,7 @@ public class MusicActionsTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void listenToAlbum() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/music.listens"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/music.listens"))
 			.andExpect(method(POST))
 			.andExpect(content().string("album=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -51,7 +51,7 @@ public class MusicActionsTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void listenToRadioStation() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/music.listens"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/music.listens"))
 			.andExpect(method(POST))
 			.andExpect(content().string("radio_station=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -63,7 +63,7 @@ public class MusicActionsTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void listenToMusician() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/music.listens"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/music.listens"))
 			.andExpect(method(POST))
 			.andExpect(content().string("musician=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -75,7 +75,7 @@ public class MusicActionsTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void listenToPlaylist() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/music.listens"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/music.listens"))
 			.andExpect(method(POST))
 			.andExpect(content().string("playlist=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -87,7 +87,7 @@ public class MusicActionsTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void createPlaylist() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/music.playlists"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/music.playlists"))
 			.andExpect(method(POST))
 			.andExpect(content().string("playlist=http%3A%2F%2Fsamples.ogp.me%2F226075010839791"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))

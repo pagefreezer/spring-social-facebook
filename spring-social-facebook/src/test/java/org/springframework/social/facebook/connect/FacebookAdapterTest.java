@@ -15,8 +15,6 @@
  */
 package org.springframework.social.facebook.connect;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.social.connect.ConnectionValues;
@@ -24,6 +22,9 @@ import org.springframework.social.connect.UserProfile;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.UserOperations;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class FacebookAdapterTest {
 
@@ -43,6 +44,8 @@ public class FacebookAdapterTest {
 		assertNull(profile.getEmail());
 		assertNull(profile.getUsername());
 	}
+	//TODO, merge 2.0.0.M1 into PF, make sure it uses 2.3 api,
+	//test social crawlers.
 
 	@Test
 	public void setConnectionValues() {		
@@ -52,8 +55,8 @@ public class FacebookAdapterTest {
 		TestConnectionValues connectionValues = new TestConnectionValues();
 		apiAdapter.setConnectionValues(facebook, connectionValues);
 		assertEquals("Craig Walls", connectionValues.getDisplayName());
-		assertEquals("http://graph.facebook.com/v1.0/12345678/picture", connectionValues.getImageUrl());
-		assertEquals("http://facebook.com/profile.php?id=12345678", connectionValues.getProfileUrl());
+		assertEquals("https://graph.facebook.com/v2.3/12345678/picture", connectionValues.getImageUrl());
+		assertEquals("https://www.facebook.com/app_scoped_user_id/12345678/", connectionValues.getProfileUrl());
 		assertEquals("12345678", connectionValues.getProviderUserId());
 	}
 

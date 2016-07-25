@@ -15,16 +15,17 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.social.NotAuthorizedException;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * @author Craig Walls
@@ -33,7 +34,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void getComments() throws Exception {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments?offset=0&limit=25&fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/123456/comments?offset=0&limit=25&fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("comments"), MediaType.APPLICATION_JSON));
@@ -52,7 +53,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getComments_withOffsetAndLimit() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments?offset=75&limit=100&fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/123456/comments?offset=75&limit=100&fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("comments"), MediaType.APPLICATION_JSON));
@@ -83,7 +84,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void getComment() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/1533260333_122829644452184_587062?fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/1533260333_122829644452184_587062?fields=id%2Cattachment%2Ccan_comment%2Ccan_remove%2Ccomment_count%2Ccreated_time%2Cfrom%2Clike_count%2Cmessage%2Cparent%2Cuser_likes"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("comment"), MediaType.APPLICATION_JSON));
@@ -112,7 +113,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void addComment() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/123456/comments"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/123456/comments"))
 			.andExpect(method(POST))
 			.andExpect(content().string("message=Cool+beans"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -127,7 +128,7 @@ public class CommentTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void deleteComment() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/1533260333_122829644452184_587062"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/1533260333_122829644452184_587062"))
 			.andExpect(method(POST))
 			.andExpect(content().string("method=delete"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))

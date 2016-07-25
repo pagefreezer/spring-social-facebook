@@ -40,7 +40,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	@Test
 	public void unknownAlias() {
 		try {
-			mockServer.expect(requestTo("https://graph.facebook.com/v2.0/dummyalias"))
+			mockServer.expect(requestTo("https://graph.facebook.com/v2.3/dummyalias"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withStatus(HttpStatus.NOT_FOUND).body(jsonResource("error-404-unknown-alias")).contentType(MediaType.APPLICATION_JSON));
@@ -54,7 +54,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	@Test
 	public void unknownPath() {
 		try {
-			mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/boguspath"))
+			mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/boguspath"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withBadRequest().body(jsonResource("error-400-unknown-path")).contentType(MediaType.APPLICATION_JSON));
@@ -69,7 +69,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	public void resource_noAccessToken() {
 		FacebookTemplate facebook = new FacebookTemplate(); // use anonymous FacebookTemplate in this test
 		MockRestServiceServer mockServer = MockRestServiceServer.createServer(facebook.getRestTemplate());
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andRespond(withBadRequest().body(jsonResource("error-400-resource-no-access-token")).contentType(MediaType.APPLICATION_JSON));
 		facebook.userOperations().getUserProfile();
@@ -79,7 +79,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	public void currentUser_noAccessToken() {
 		FacebookTemplate facebook = new FacebookTemplate(); // use anonymous FacebookTemplate in this test
 		MockRestServiceServer mockServer = MockRestServiceServer.createServer(facebook.getRestTemplate());
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andRespond(withBadRequest().body(jsonResource("error-400-current-user-no-token")).contentType(MediaType.APPLICATION_JSON));
 		facebook.userOperations().getUserProfile();
@@ -87,7 +87,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = ExpiredAuthorizationException.class)
 	public void currentUser_expiredToken() { // The token has expired
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-token-expired")).contentType(MediaType.APPLICATION_JSON));
@@ -97,7 +97,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = RevokedAuthorizationException.class)
 	public void currentUser_removedApp() { // The user removed the app via Facebook's web application
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-invalid-token-removed-app")).contentType(MediaType.APPLICATION_JSON));
@@ -107,7 +107,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = RevokedAuthorizationException.class)
 	public void currentUser_loggedOut() { // The user logged out of Facebook
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-invalid-token-logged-out")).contentType(MediaType.APPLICATION_JSON));
@@ -117,7 +117,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = RevokedAuthorizationException.class)
 	public void currentUser_sessionDoesNotMatch() { // The user logged out of Facebook and another user has logged in (?)
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-session-does-not-match")).contentType(MediaType.APPLICATION_JSON));
@@ -127,7 +127,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = RevokedAuthorizationException.class)
 	public void currentUser_changedPassword() { // The user has changed their password
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-invalid-token-changed-password")).contentType(MediaType.APPLICATION_JSON));
@@ -137,7 +137,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = InvalidAuthorizationException.class)
 	public void currentUser_unknownInvalidAuthorization() { // The token is invalid, but the reason is not one otherwise expected by this error handler.
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-invalid-token-unknown-reason")).contentType(MediaType.APPLICATION_JSON));
@@ -147,7 +147,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = InvalidAuthorizationException.class)
 	public void currentUser_unknownInvalidAppId() { // This shouldn't happen normally, but could if the access token is manually typed and a mistake is made
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-invalid-token-invalid-appid")).contentType(MediaType.APPLICATION_JSON));
@@ -157,7 +157,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = InvalidAuthorizationException.class)
 	public void currentUser_unknownInvalidToken() { // This shouldn't happen normally, but could if the access token is manually typed and a mistake is made
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withUnauthorizedRequest().body(jsonResource("error-401-invalid-oauth-access-token")).contentType(MediaType.APPLICATION_JSON));
@@ -168,7 +168,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	@Test
 	public void userHasntAuthorized() {
 		try {
-			mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed"))
+			mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/feed"))
 				.andExpect(method(POST))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withStatus(HttpStatus.FORBIDDEN).body(jsonResource("error-403-not-authorized-for-action")).contentType(MediaType.APPLICATION_JSON));
@@ -182,7 +182,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	@Test
 	public void notAuthorizedForAction() {		
 		try {
-			mockServer.expect(requestTo("https://graph.facebook.com/v2.0/193482154020832/declined"))
+			mockServer.expect(requestTo("https://graph.facebook.com/v2.3/193482154020832/declined"))
 				.andExpect(method(POST))
 				.andExpect(header("Authorization", "OAuth someAccessToken"))
 				.andRespond(withStatus(HttpStatus.FORBIDDEN).body(jsonResource("error-403-requires-extended-permission")).contentType(MediaType.APPLICATION_JSON));
@@ -197,7 +197,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	@Test(expected = InsufficientPermissionException.class)
 	@Ignore("This doesn't seem to happen anymore...It looks like FB fixed their errors.")
 	public void falseResponse() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/someobject"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/someobject"))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess("false", MediaType.APPLICATION_JSON));
@@ -206,7 +206,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 
 	@Test(expected = RateLimitExceededException.class)
 	public void rateLimit() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/feed"))
 			.andExpect(method(POST))
 			.andExpect(content().string("message=Test+Message"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -219,7 +219,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 		
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/feed"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/feed"))
 			.andExpect(method(POST))
 			.andExpect(content().string("message=Test+Message"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
@@ -229,7 +229,7 @@ public class ErrorHandlingTest extends AbstractFacebookApiTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void notFound() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/nobody/feed?limit=25&fields=id" +
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/nobody/feed?limit=25&fields=id" +
 				"%2Clikes.limit%281%29%2Ccomments.limit%281%29%2Cfrom%2Cstory%2Cstory_tags%2Cpicture%2Clink" +
 				"%2Csource%2Cname%2Ccaption%2Cdescription%2Cicon%2Cactions%2Cprivacy%2Ctype%2Cstatus_type" +
 				"%2Ccreated_time%2Cupdated_time%2Cis_hidden%2Csubscribed%2Cis_expired%2Cmessage"))

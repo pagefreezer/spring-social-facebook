@@ -15,15 +15,15 @@
  */
 package org.springframework.social.facebook.api;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.social.NotAuthorizedException;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * @author Craig Walls
@@ -37,7 +37,7 @@ public class OpenGraphTemplateTest extends AbstractFacebookApiTest {
 	
 	@Test
 	public void publishAction() {
-		mockServer.expect(requestTo("https://graph.facebook.com/v2.0/me/socialshowcase:ding"))
+		mockServer.expect(requestTo("https://graph.facebook.com/v2.3/me/socialshowcase:ding"))
 			.andExpect(method(POST))
 			.andExpect(content().string("thing=http%3A%2F%2Fwww.springsource.org%2Fspringsocial"))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
