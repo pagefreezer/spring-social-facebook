@@ -74,6 +74,6 @@
         }
     ],
     "paging": {
-        "next": "https://graph.facebook.com/v2.1/1401275846826808/achievements?limit=25&offset=25&__after_id=enc_Aez-Zcyvajp_ekZQ4YTb4HNinLwVEsrt7a6zC7yIBHctK7yQE-ztyXLkNmnipSD_PjYI8udclTSDx7NS5TTFfTQs"
+        "next": "https://graph.facebook.com/v2.2/1401275846826808/achievements?limit=25&offset=25&__after_id=enc_Aez-Zcyvajp_ekZQ4YTb4HNinLwVEsrt7a6zC7yIBHctK7yQE-ztyXLkNmnipSD_PjYI8udclTSDx7NS5TTFfTQs"
     }
 }
