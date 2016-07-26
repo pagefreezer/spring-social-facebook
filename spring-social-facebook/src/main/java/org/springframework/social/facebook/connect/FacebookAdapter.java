@@ -49,8 +49,11 @@ public class FacebookAdapter implements ApiAdapter<Facebook> {
 
 	public UserProfile fetchUserProfile(Facebook facebook) {
 		FacebookProfile profile = facebook.userOperations().getUserProfile();
-		return new UserProfileBuilder().setName(profile.getName()).setFirstName(profile.getFirstName()).setLastName(profile.getLastName()).
-			setEmail(profile.getEmail()).build();
+		return new UserProfileBuilder()
+				.setName(profile.getName())
+				.setFirstName(profile.getFirstName())
+				.setLastName(profile.getLastName())
+				.setEmail(profile.getEmail()).build();
 	}
 	
 	public void updateStatus(Facebook facebook, String message) {

@@ -35,7 +35,7 @@ import java.util.Collections;
 public class FacebookOAuth2Template extends OAuth2Template {
 
 	public FacebookOAuth2Template(String clientId, String clientSecret) {
-		super(clientId, clientSecret, "https://www.facebook.com/v2.2/dialog/oauth", "https://graph.facebook.com/v2.2/oauth/access_token");
+		super(clientId, clientSecret, "https://www.facebook.com/v2.3/dialog/oauth", "https://graph.facebook.com/v2.3/oauth/access_token");
 		setUseParametersForClientAuthentication(true);
 	}
 
@@ -56,7 +56,12 @@ public class FacebookOAuth2Template extends OAuth2Template {
 	@SuppressWarnings("unchecked")	
 	protected AccessGrant postForAccessGrant(String accessTokenUrl, MultiValueMap<String, String> parameters) {
 		MultiValueMap<String, String> response = getRestTemplate().postForObject(accessTokenUrl, parameters, MultiValueMap.class);
-		String expires = response.getFirst("expires");
+		String expires;
+		if (response.containsKey("expires_in")) {
+			expires = response.getFirst("expires_in"); //Available for API v2.3+
+		} else {
+			expires = response.getFirst("expires"); //Available only for API v2.0 and v2.1
+		}
 		return new AccessGrant(response.getFirst("access_token"), null, null, expires != null ? Long.valueOf(expires) : null);
 	}
 }
