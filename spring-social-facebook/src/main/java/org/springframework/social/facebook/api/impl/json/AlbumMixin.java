@@ -15,21 +15,21 @@
  */
 package org.springframework.social.facebook.api.impl.json;
 
-import java.io.IOException;
-import java.util.Date;
-
-import org.springframework.social.facebook.api.Album.Privacy;
-import org.springframework.social.facebook.api.Album.Type;
-import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.api.Reference;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.social.facebook.api.Album.Privacy;
+import org.springframework.social.facebook.api.Album.Type;
+import org.springframework.social.facebook.api.Page;
+import org.springframework.social.facebook.api.Reference;
+
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * Annotated mixin to add Jackson annotations to Album. 
@@ -48,6 +48,7 @@ abstract class AlbumMixin extends FacebookObjectMixin {
 	int count;
 	
 	@JsonProperty("cover_photo")
+	@JsonDeserialize(using=AlbumCoverPhotoDeserializer.class)
 	String coverPhoto;
 		
 	@JsonProperty("created_time") 
@@ -80,6 +81,25 @@ abstract class AlbumMixin extends FacebookObjectMixin {
 	
 	@JsonProperty("updated_time")
 	Date updatedTime;
+
+	private static class AlbumCoverPhotoDeserializer extends JsonDeserializer<String> {
+		@Override
+		public String deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+			try {
+				JsonNode node = jp.getCodec().readTree(jp);
+				if (node.has("cover_photo")) {
+					node = node.get("cover_photo");
+				}
+				if (node == null) {
+					return null;
+				}
+
+				return node.has("id") ? node.get("id").asText() : node.asText();
+			} catch (Exception e) {
+				return null;
+			}
+		}
+	}
 	
 	private static class TypeDeserializer extends JsonDeserializer<Type> {
 		@Override

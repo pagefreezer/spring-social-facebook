@@ -32,9 +32,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 public class MediaTemplateTest extends AbstractFacebookApiTest {
 
+	private static final String ALBUM_FIELDS = "id%2Ccan_upload%2Ccount%2Ccover_photo%7Bid%7D%2Ccreated_time%2Cfrom%2Clink%2Cname%2Ctype%2Cupdated_time";
+
+	private static final String PHOTO_FIELDS = "id%2Ccreated_time%2Cfrom%2Cheight%2Cicon%2Cimages%2Clink%2Cname%2Cpicture%2Csource%2Cupdate_time%2Cwidth";
+
 	@Test
 	public void getAlbums() {
-		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/me/albums?offset=0&limit=25"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/me/albums?offset=0&limit=25&fields="+ALBUM_FIELDS))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
@@ -49,7 +53,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getAlbums_forSpecificUser() {
-		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/albums?offset=0&limit=25"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/albums?offset=0&limit=25&fields="+ALBUM_FIELDS))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
@@ -60,7 +64,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void getAlbums_forSpecificUser_unauthorized() {
 		try {
-			unauthorizedMockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/albums?offset=0&limit=25"))
+			unauthorizedMockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/albums?offset=0&limit=25&fields="+ALBUM_FIELDS))
 				.andExpect(method(GET))
 				.andRespond(withSuccess(jsonResource("albums"), MediaType.APPLICATION_JSON));
 			unauthorizedFacebook.mediaOperations().getAlbums("192837465");
@@ -101,7 +105,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 
 	@Test
 	public void getPhotos() {
-		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/10151447271460580/photos?offset=0&limit=25"))
+		mockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/10151447271460580/photos?offset=0&limit=25&fields=" + PHOTO_FIELDS))
 			.andExpect(method(GET))
 			.andExpect(header("Authorization", "OAuth someAccessToken"))
 			.andRespond(withSuccess(jsonResource("photos"), MediaType.APPLICATION_JSON));
@@ -113,7 +117,7 @@ public class MediaTemplateTest extends AbstractFacebookApiTest {
 	@Test
 	public void getPhotos_unauthorized() {
 		try {
-			unauthorizedMockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/photos?offset=0&limit=25"))
+			unauthorizedMockServer.expect(requestTo(GRAPH_API_FACEBOOK + "/192837465/photos?offset=0&limit=25&fields=" + PHOTO_FIELDS))
 				.andExpect(method(GET))
 				.andRespond(withSuccess(jsonResource("photos"), MediaType.APPLICATION_JSON));
 			unauthorizedFacebook.mediaOperations().getPhotos("192837465");
