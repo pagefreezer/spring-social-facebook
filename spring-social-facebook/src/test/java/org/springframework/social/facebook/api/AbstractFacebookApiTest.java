@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class AbstractFacebookApiTest {
 
-	protected static final String GRAPH_API_FACEBOOK = "https://graph.facebook.com/v2.4";
+	protected static final String GRAPH_API_FACEBOOK = "https://graph.facebook.com/v2.3";
 
 	protected static final String ACCESS_TOKEN = "someAccessToken";
 	protected static final String APP_ACCESS_TOKEN = "123456|abcdefg987654321";
