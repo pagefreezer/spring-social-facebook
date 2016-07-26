@@ -15,173 +15,177 @@
  */
 package org.springframework.social.facebook.api.impl;
 
-import static org.springframework.social.facebook.api.impl.PagedListUtils.*;
-
-import java.util.Map;
-
 import org.springframework.core.io.Resource;
-import org.springframework.social.facebook.api.Album;
-import org.springframework.social.facebook.api.GraphApi;
-import org.springframework.social.facebook.api.ImageType;
-import org.springframework.social.facebook.api.MediaOperations;
-import org.springframework.social.facebook.api.PagedList;
-import org.springframework.social.facebook.api.PagingParameters;
-import org.springframework.social.facebook.api.Photo;
-import org.springframework.social.facebook.api.Video;
+import org.springframework.social.facebook.api.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+
+import static org.springframework.social.facebook.api.impl.PagedListUtils.getPagingParameters;
+
 class MediaTemplate extends AbstractFacebookOperations implements MediaOperations {
 
-	private final GraphApi graphApi;
-	
-	private final RestTemplate restTemplate;
+    private final GraphApi graphApi;
 
-	public MediaTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
-		super(isAuthorizedForUser, restTemplate);
-		this.graphApi = graphApi;
-		this.restTemplate = restTemplate;
-	}
+    private final RestTemplate restTemplate;
 
-	public PagedList<Album> getAlbums() {
-		requireAuthorization();
-		return getAlbums("me", new PagingParameters(25, 0, null, null));
-	}
+    private static final String[] ALBUM_FIELDS = {
+            "id", "can_upload", "count", "cover_photo{id}", "created_time", "from", "link", "name", "type",
+            "updated_time"};
 
-	public PagedList<Album> getAlbums(PagingParameters pagedListParameters) {
-		requireAuthorization();
-		return getAlbums("me", pagedListParameters);
-	}
+    private static final String[] PHOTO_FIELDS = {
+            "id", "created_time", "from", "height", "icon", "images", "link", "name", "picture", "source",
+            "update_time", "width"
+    };
 
-	public PagedList<Album> getAlbums(String userId) {
-		return getAlbums(userId, new PagingParameters(25, 0, null, null));
-	}
-	
-	public PagedList<Album> getAlbums(String userId, PagingParameters pagedListParameters) {
-		return graphApi.fetchConnections(userId, "albums", Album.class, getPagingParameters(pagedListParameters));
-	}
+    public MediaTemplate(GraphApi graphApi, RestTemplate restTemplate, boolean isAuthorizedForUser) {
+        super(isAuthorizedForUser, restTemplate);
+        this.graphApi = graphApi;
+        this.restTemplate = restTemplate;
+    }
 
-	public Album getAlbum(String albumId) {
-		return graphApi.fetchObject(albumId, Album.class);
-	}
-	
-	public String createAlbum(String name, String description) {
-		requireAuthorization();
-		return createAlbum("me", name, description);
-	}
-	
-	public String createAlbum(String ownerId, String name, String description) {
-		requireAuthorization();
-		MultiValueMap<String, Object> data = new LinkedMultiValueMap<String, Object>();
-		data.set("name", name);
-		data.set("message", description);
-		return graphApi.publish(ownerId, "albums", data);
-	}
-	
-	public byte[] getAlbumImage(String albumId) {
-		return getAlbumImage(albumId, ImageType.ALBUM);
-	}
-	
-	public byte[] getAlbumImage(String albumId, ImageType imageType) {
-		requireAuthorization();
-		return graphApi.fetchImage(albumId, "picture", imageType);
-	}
-	
-	public PagedList<Photo> getPhotos(String objectId) {
-		return getPhotos(objectId, new PagingParameters(25, 0, null, null));
-	}
-	
-	public PagedList<Photo> getPhotos(String objectId, PagingParameters pagedListParameters) {
-		return graphApi.fetchConnections(objectId, "photos", Photo.class, getPagingParameters(pagedListParameters));
-	}
-	
-	public Photo getPhoto(String photoId) {
-		return graphApi.fetchObject(photoId, Photo.class);
-	}
-	
-	public byte[] getPhotoImage(String photoId) {
-		return getPhotoImage(photoId, ImageType.NORMAL);
-	}
-	
-	public byte[] getPhotoImage(String photoId, ImageType imageType) {
-		return graphApi.fetchImage(photoId, "picture", imageType);
-	}
+    public PagedList<Album> getAlbums() {
+        requireAuthorization();
+        return getAlbums("me", new PagingParameters(25, 0, null, null));
+    }
 
-	public String postPhoto(Resource photo) {
-		requireAuthorization();
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.set("source", photo);
-		return graphApi.publish("me", "photos", parts);
-	}
-	
-	public String postPhoto(Resource photo, String caption) {
-		requireAuthorization();
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.set("source", photo);
-		parts.set("message", caption);
-		return graphApi.publish("me", "photos", parts);
-	}
-	
-	public String postPhoto(String albumId, Resource photo) {
-		requireAuthorization();
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.set("source", photo);
-		return graphApi.publish(albumId, "photos", parts);
-	}
-	
-	public String postPhoto(String albumId, Resource photo, String caption) {
-		requireAuthorization();
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.set("source", photo);
-		parts.set("message", caption);
-		return graphApi.publish(albumId, "photos", parts);
-	}
-	
-	public PagedList<Video> getVideos() {
-		return getVideos("me", new PagingParameters(25, 0, null, null));
-	}
+    public PagedList<Album> getAlbums(PagingParameters pagedListParameters) {
+        requireAuthorization();
+        return getAlbums("me", pagedListParameters);
+    }
 
-	public PagedList<Video> getVideos(PagingParameters pagedListParameters) {
-		return getVideos("me", pagedListParameters);
-	}
+    public PagedList<Album> getAlbums(String userId) {
+        return getAlbums(userId, new PagingParameters(25, 0, null, null));
+    }
 
-	public PagedList<Video> getVideos(String userId) {
-		return getVideos(userId, new PagingParameters(25, 0, null, null));
-	}
-	
-	public PagedList<Video> getVideos(String userId, PagingParameters pagedListParameters) {
-		requireAuthorization();
-		return graphApi.fetchConnections(userId, "videos", Video.class, getPagingParameters(pagedListParameters));
-	}
-	
-	public Video getVideo(String videoId) {
-		requireAuthorization();
-		return graphApi.fetchObject(videoId, Video.class);
-	}
-	
-	public byte[] getVideoImage(String videoId) {
-		requireAuthorization();
-		return graphApi.fetchImage(videoId, "picture", ImageType.SMALL);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public String postVideo(Resource video) {
-		requireAuthorization();
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.set("file", video);
-		Map<String, Object> response = restTemplate.postForObject("https://graph-video.facebook.com/me/videos", parts, Map.class);
-		return (String) response.get("id");
-	}
-	
-	@SuppressWarnings("unchecked")
-	public String postVideo(Resource video, String title, String description) {
-		requireAuthorization();
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.set("file", video);
-		parts.set("title", title);
-		parts.set("description", description);
-		Map<String, Object> response = restTemplate.postForObject("https://graph-video.facebook.com/me/videos", parts, Map.class);
-		return (String) response.get("id");
-	}
+    public PagedList<Album> getAlbums(String userId, PagingParameters pagedListParameters) {
+        return graphApi.fetchConnections(userId, "albums", Album.class,
+                getPagingParameters(pagedListParameters), ALBUM_FIELDS);
+    }
+
+    public Album getAlbum(String albumId) {
+        return graphApi.fetchObject(albumId, Album.class);
+    }
+
+    public String createAlbum(String name, String description) {
+        requireAuthorization();
+        return createAlbum("me", name, description);
+    }
+
+    public String createAlbum(String ownerId, String name, String description) {
+        requireAuthorization();
+        MultiValueMap<String, Object> data = new LinkedMultiValueMap<String, Object>();
+        data.set("name", name);
+        data.set("message", description);
+        return graphApi.publish(ownerId, "albums", data);
+    }
+
+    public byte[] getAlbumImage(String albumId) {
+        return getAlbumImage(albumId, ImageType.ALBUM);
+    }
+
+    public byte[] getAlbumImage(String albumId, ImageType imageType) {
+        requireAuthorization();
+        return graphApi.fetchImage(albumId, "picture", imageType);
+    }
+
+    public PagedList<Photo> getPhotos(String objectId) {
+        return getPhotos(objectId, new PagingParameters(25, 0, null, null));
+    }
+
+    public PagedList<Photo> getPhotos(String objectId, PagingParameters pagedListParameters) {
+        return graphApi.fetchConnections(objectId, "photos", Photo.class,
+                getPagingParameters(pagedListParameters), PHOTO_FIELDS);
+    }
+
+    public Photo getPhoto(String photoId) {
+        return graphApi.fetchObject(photoId, Photo.class);
+    }
+
+    public byte[] getPhotoImage(String photoId) {
+        return getPhotoImage(photoId, ImageType.NORMAL);
+    }
+
+    public byte[] getPhotoImage(String photoId, ImageType imageType) {
+        return graphApi.fetchImage(photoId, "picture", imageType);
+    }
+
+    public String postPhoto(Resource photo) {
+        requireAuthorization();
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+        parts.set("source", photo);
+        return graphApi.publish("me", "photos", parts);
+    }
+
+    public String postPhoto(Resource photo, String caption) {
+        requireAuthorization();
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+        parts.set("source", photo);
+        parts.set("message", caption);
+        return graphApi.publish("me", "photos", parts);
+    }
+
+    public String postPhoto(String albumId, Resource photo) {
+        requireAuthorization();
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+        parts.set("source", photo);
+        return graphApi.publish(albumId, "photos", parts);
+    }
+
+    public String postPhoto(String albumId, Resource photo, String caption) {
+        requireAuthorization();
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+        parts.set("source", photo);
+        parts.set("message", caption);
+        return graphApi.publish(albumId, "photos", parts);
+    }
+
+    public PagedList<Video> getVideos() {
+        return getVideos("me", new PagingParameters(25, 0, null, null));
+    }
+
+    public PagedList<Video> getVideos(PagingParameters pagedListParameters) {
+        return getVideos("me", pagedListParameters);
+    }
+
+    public PagedList<Video> getVideos(String userId) {
+        return getVideos(userId, new PagingParameters(25, 0, null, null));
+    }
+
+    public PagedList<Video> getVideos(String userId, PagingParameters pagedListParameters) {
+        requireAuthorization();
+        return graphApi.fetchConnections(userId, "videos", Video.class, getPagingParameters(pagedListParameters));
+    }
+
+    public Video getVideo(String videoId) {
+        requireAuthorization();
+        return graphApi.fetchObject(videoId, Video.class);
+    }
+
+    public byte[] getVideoImage(String videoId) {
+        requireAuthorization();
+        return graphApi.fetchImage(videoId, "picture", ImageType.SMALL);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String postVideo(Resource video) {
+        requireAuthorization();
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+        parts.set("file", video);
+        Map<String, Object> response = restTemplate.postForObject("https://graph-video.facebook.com/me/videos", parts, Map.class);
+        return (String) response.get("id");
+    }
+
+    @SuppressWarnings("unchecked")
+    public String postVideo(Resource video, String title, String description) {
+        requireAuthorization();
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+        parts.set("file", video);
+        parts.set("title", title);
+        parts.set("description", description);
+        Map<String, Object> response = restTemplate.postForObject("https://graph-video.facebook.com/me/videos", parts, Map.class);
+        return (String) response.get("id");
+    }
 }

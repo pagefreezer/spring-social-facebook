@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
 
 public class FacebookAdapterTest {
 
-	private static final String GRAPH_API_FACEBOOK = "http://graph.facebook.com/v2.1";
+	private static final String GRAPH_API_FACEBOOK = "https://graph.facebook.com/v2.3";
 
 	private FacebookAdapter apiAdapter = new FacebookAdapter();
 	
