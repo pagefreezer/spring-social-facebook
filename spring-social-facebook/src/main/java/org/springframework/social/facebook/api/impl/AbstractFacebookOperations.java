@@ -15,6 +15,8 @@
  */
 package org.springframework.social.facebook.api.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +28,6 @@ import org.springframework.social.facebook.api.FacebookThresholdLimitReachedExce
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.List;
 
 class AbstractFacebookOperations {
 
@@ -108,8 +109,10 @@ class AbstractFacebookOperations {
 	 * https://developers.facebook.com/docs/graph-api/advanced/rate-limiting
 	 */
 	private class RateLimitRequestInterceptor implements ClientHttpRequestInterceptor {
+
 		private final String id;
 		private final int thresholdPercentage = 80; //we shouldn't use more than this percentage
+		private final ObjectMapper objectMapper;
 
 		private static final String CALL_COUNT_PARAM = "call_count"; //
 		private static final String TOTAL_TIME_PARAM = "total_time";
@@ -118,6 +121,7 @@ class AbstractFacebookOperations {
 
 		public RateLimitRequestInterceptor(int id) {
 			this.id = "rateLimit-interceptor-" + id;
+			this.objectMapper = new ObjectMapper();
 		}
 
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
@@ -142,34 +146,50 @@ class AbstractFacebookOperations {
 		 */
 		private boolean mightGetRateLimited(HttpHeaders headers) {
 			logger.debug("Response Headers: " + headers.toSingleValueMap());
-			if (!headers.containsKey(X_APP_USAGE_PARAM)) {
+			String appUsageParam = null;
+			if (headers.containsKey(X_APP_USAGE_PARAM)) {
+				logger.debug("Response Headers: " + headers.getFirst(X_APP_USAGE_PARAM));
+				appUsageParam = headers.getFirst(X_APP_USAGE_PARAM);
+			} else if (headers.containsKey(X_APP_USAGE_PARAM.toLowerCase())) {
+				logger.debug("Response Headers: " + headers.getFirst(X_APP_USAGE_PARAM.toLowerCase()));
+				appUsageParam = headers.getFirst(X_APP_USAGE_PARAM.toLowerCase());
+			} else {
+				logger.debug(X_APP_USAGE_PARAM + " parameter is not present.");
 				return false;
 			}
 
-			List<String> appUsageParams = headers.get(X_APP_USAGE_PARAM);
-			if (appUsageParams == null || appUsageParams.isEmpty()) {
+			if (appUsageParam == null || appUsageParam.trim().length() == 0) {
+				logger.debug(X_APP_USAGE_PARAM + " parameter is empty.");
 				return false;
 			}
 
-			logger.info("_app_usage_params: " + appUsageParams);
-			if (readFrom(headers, CALL_COUNT_PARAM) >= thresholdPercentage
-					|| readFrom(headers, TOTAL_TIME_PARAM) >= thresholdPercentage
-					|| readFrom(headers, TOTAL_CPU_TIME_PARAM) >= thresholdPercentage) {
+			logger.info(X_APP_USAGE_PARAM + " parameter found: " + appUsageParam);
+			JsonNode json = getJson(appUsageParam);
+			if (json == null) {
+				return false;
+			}
+
+			if (json.get(CALL_COUNT_PARAM).asInt() >= thresholdPercentage
+					|| json.get(TOTAL_TIME_PARAM).asInt() >= thresholdPercentage
+					|| json.get(TOTAL_CPU_TIME_PARAM).asInt() >= thresholdPercentage) {
 				return true;
 			}
 
 			return false;
 		}
 
-		private int readFrom(HttpHeaders headers, String param) {
+		/**
+		 * Expected input: "{\"call_count\":x,\"total_cputime\":y,\"total_time\":z}"
+		 * @param appUsageParam
+		 * @return jsonNode with key:value pairs
+		 */
+		private JsonNode getJson(String appUsageParam) {
 			try {
-				if (headers.containsKey(param)) {
-					return Integer.parseInt(headers.getFirst(param));
-				}
-			} catch (Exception e) {
-				logger.debug(e, e);
+				return this.objectMapper.readTree(appUsageParam);
+			} catch (IOException e) {
+				logger.error("Unable to parse x-app-usage parameter: " + appUsageParam, e);
+				return null;
 			}
-			return -1;
 		}
 
 		@Override
@@ -185,5 +205,4 @@ class AbstractFacebookOperations {
 			return id.hashCode();
 		}
 	}
-
 }
