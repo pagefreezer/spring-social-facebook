@@ -118,6 +118,7 @@ class AbstractFacebookOperations {
 		private static final String TOTAL_TIME_PARAM = "total_time";
 		private static final String TOTAL_CPU_TIME_PARAM = "total_cputime";
 		private static final String X_APP_USAGE_PARAM = "X-App-Usage";
+		private static final String X_PAGE_USAGE_PARAM = "X-Page-Usage";
 
 		public RateLimitRequestInterceptor(int id) {
 			this.id = "rateLimit-interceptor-" + id;
@@ -128,8 +129,12 @@ class AbstractFacebookOperations {
 			ClientHttpResponse response = execution.execute(request, body);
 			logger.debug("Request: " + request.getMethod().name() + " " + request.getURI().toString());
 			logger.debug("Response: " + response.getRawStatusCode() + " " + response.getStatusText());
-			if (mightGetRateLimited(response.getHeaders())) {
-				logger.warn("Approaching API usage.");
+			if (mightGetRateLimited(response.getHeaders(), X_APP_USAGE_PARAM)) {
+				logger.warn("Approaching API usage limit with App token.");
+				throw new FacebookThresholdLimitReachedException();
+			}
+			if (mightGetRateLimited(response.getHeaders(), X_PAGE_USAGE_PARAM)) {
+				logger.warn("Approaching API usage limit with Page token.");
 				throw new FacebookThresholdLimitReachedException();
 			}
 			return response;
@@ -144,27 +149,27 @@ class AbstractFacebookOperations {
 		 * @param headers
 		 * @return true when the thresholdPercentage was reached, false otherwise.
 		 */
-		private boolean mightGetRateLimited(HttpHeaders headers) {
+		private boolean mightGetRateLimited(HttpHeaders headers, final String headerParam) {
 			logger.debug("Response Headers: " + headers.toSingleValueMap());
 			String appUsageParam = null;
-			if (headers.containsKey(X_APP_USAGE_PARAM)) {
-				logger.debug("Response Headers: " + headers.getFirst(X_APP_USAGE_PARAM));
-				appUsageParam = headers.getFirst(X_APP_USAGE_PARAM);
-			} else if (headers.containsKey(X_APP_USAGE_PARAM.toLowerCase())) {
-				logger.debug("Response Headers: " + headers.getFirst(X_APP_USAGE_PARAM.toLowerCase()));
-				appUsageParam = headers.getFirst(X_APP_USAGE_PARAM.toLowerCase());
+			if (headers.containsKey(headerParam)) {
+				logger.debug("Response Headers: " + headers.getFirst(headerParam));
+				appUsageParam = headers.getFirst(headerParam);
+			} else if (headers.containsKey(headerParam.toLowerCase())) {
+				logger.debug("Response Headers: " + headers.getFirst(headerParam.toLowerCase()));
+				appUsageParam = headers.getFirst(headerParam.toLowerCase());
 			} else {
-				logger.debug(X_APP_USAGE_PARAM + " parameter is not present.");
+				logger.debug(headerParam + " parameter is not present.");
 				return false;
 			}
 
 			if (appUsageParam == null || appUsageParam.trim().length() == 0) {
-				logger.debug(X_APP_USAGE_PARAM + " parameter is empty.");
+				logger.debug(headerParam + " parameter is empty.");
 				return false;
 			}
 
-			logger.info(X_APP_USAGE_PARAM + " parameter found: " + appUsageParam);
-			JsonNode json = getJson(appUsageParam);
+			logger.info(headerParam + " parameter found: " + appUsageParam);
+			JsonNode json = getJson(appUsageParam, headerParam);
 			if (json == null) {
 				return false;
 			}
@@ -183,11 +188,11 @@ class AbstractFacebookOperations {
 		 * @param appUsageParam
 		 * @return jsonNode with key:value pairs
 		 */
-		private JsonNode getJson(String appUsageParam) {
+		private JsonNode getJson(String appUsageParam, String paramName) {
 			try {
 				return this.objectMapper.readTree(appUsageParam);
 			} catch (IOException e) {
-				logger.error("Unable to parse x-app-usage parameter: " + appUsageParam, e);
+				logger.error("Unable to parse " + paramName + " parameter: " + appUsageParam, e);
 				return null;
 			}
 		}
